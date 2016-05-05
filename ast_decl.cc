@@ -17,7 +17,7 @@ void VarDecl::CheckID(Identifier *id){
   }
   string s = string( id->GetName() );
   scope* sc = Node::symtable->currScope();
-  SymbolTable::lookup(s,sc);
+  Node::symtable->lookup(s,sc);
 }
          
 Decl::Decl(Identifier *n) : Node(*n->GetLocation()) {

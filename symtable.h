@@ -31,7 +31,7 @@ class SymbolTable {
     void pushScope(scope s);
     void popScope();
     void addSymbol(string key, Decl* decl);
-    Decl* lookup(string key, scope);
+    Decl* lookup(string key, scope*);
     scope* currScope();
    
 };
