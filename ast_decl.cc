@@ -17,7 +17,7 @@ void VarDecl::CheckID(Identifier *id){
   }
   string s = string( id->GetName() );
   scope* sc = Node::symtable->currScope();
-  Decl *d = Node::symtable->lookup(s,sc);
+  Decl *d = Node::symtable->lookup(s);
   if (d != NULL) {
     ReportError::DeclConflict(this, d);
   }

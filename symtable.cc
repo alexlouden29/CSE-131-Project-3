@@ -35,14 +35,14 @@ void SymbolTable::popScope(){
 }
 
 void SymbolTable::addSymbol(string key, Decl* decl){
-  map<string, Decl*> m = scopes.back();
+  map<string, Decl*> m = scopes.front();
   m.insert(pair<string,Decl*>(key,decl));
 }
 
 Decl* SymbolTable::lookup(string key){
   Decl* d = NULL;
   for(vector<scope>::reverse_iterator vectorIt = scopes.rbegin(); vectorIt != scopes.rend(); ++vectorIt){
-    scope *s = &vectorIt;
+    scope* s = &(*vectorIt);
     d = lookupInScope(key, s);
     if(d != NULL){
       break;

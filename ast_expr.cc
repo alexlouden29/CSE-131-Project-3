@@ -9,6 +9,17 @@
 #include "ast_decl.h"
 #include "symtable.h"
 
+//Type* VarExpr::CheckWithType(){}
+
+//Use IncompatibleOperands(Operator *op, Type *lhs, Type *rhs)
+/*Type* AssignExpr::CheckWithType(){
+  
+  if(!left->Type::IsConvertibleTo(right)){
+    ReportError::IncompatibleOperands(op, left, right);
+    return Type::errorType;
+  }
+}*/
+
 IntConstant::IntConstant(yyltype loc, int val) : Expr(loc) {
     value = val;
 }
