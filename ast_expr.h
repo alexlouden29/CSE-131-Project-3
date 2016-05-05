@@ -29,7 +29,7 @@ class Expr : public Stmt
     friend std::ostream& operator<< (std::ostream& stream, Expr * expr) {
         return stream << expr->GetPrintNameForNode();
     }
-
+  void Check() { CheckWithType(); }
   virtual Type* CheckWithType(){ return NULL; }
 };
 
@@ -92,6 +92,8 @@ class VarExpr : public Expr
     const char *GetPrintNameForNode() { return "VarExpr"; }
     void PrintChildren(int indentLevel);
     Identifier *GetIdentifier() {return id;}
+
+  //Type* CheckWithType();
 };
 
 class Operator : public Node 
