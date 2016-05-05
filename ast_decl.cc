@@ -87,6 +87,35 @@ void FnDecl::PrintChildren(int indentLevel) {
 }
 
 void FnDecl::CheckID( Identifier *id){
-  
-}
+  //pushing new scope
+  scope s;
+  symtable->pushScope(s);
 
+  //how do i verify?
+
+  //adding formals into scope
+  List<VarDecl*> *formals = FnDecl::GetFormals();
+  VarDecl *v = NULL;
+  for(int i = 0; i < formals->NumElements(); i++){
+    v = formals->Nth(i);
+    v->Check();
+  }
+
+  //need to call check on each stmt inside stmtblock
+}
+/*
+//pushing new scope
+	symtable->pushScope(scope s);
+
+	//how do i verify?
+
+	//adding formals into scope
+	List<VarDecl*> formals = FnDecl::GetFormals(); //list of VarDecl*
+	VarDecl *v = NULL;
+	for(int i = 0; i < formals.size(); i++){
+		v = formals[i];
+		v->CheckID(v->id);
+	}
+
+	//calling check on each stmt inside stmtblock
+*/
