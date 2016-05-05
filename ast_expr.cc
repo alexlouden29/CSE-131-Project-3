@@ -8,10 +8,16 @@
 #include "ast_type.h"
 #include "ast_decl.h"
 #include "symtable.h"
+#include "errors.h"
 
+//Checks if variable is in scope, if not return error and set to errorType.
 Type* VarExpr::CheckWithType(){
-  //Decl* vType = Node::symtable->lookup(id->GetName());
-  return this->type;
+  VarDecl* vType = (VarDecl*)Node::symtable->lookup(id->GetName());
+  if(vType == NULL){ 
+    ReportError::IdentifierNotDeclared(this->GetIdentifier(), reasonT(1));
+    return Type::errorType;
+  }
+  return vType->GetType();
 }
 
 
