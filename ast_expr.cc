@@ -16,7 +16,8 @@
 Type* AssignExpr::CheckWithType(){
   if(!left->type->Type::IsConvertibleTo(right->type)){
     ReportError::IncompatibleOperands(op, left->type, right->type);
-    return Type::errorType;
+    left->type = Type::errorType;
+    return left->type;
   }
   return left->type;
 }
@@ -30,7 +31,8 @@ Type* LogicalExpr::CheckWithType(){
   }
   else{
     ReportError::IncompatibleOperands(op, left->type, right->type);
-    return Type::errorType;
+    left->type = Type::errorType;
+    return left->type;
   }
 }
 
@@ -38,16 +40,17 @@ Type* LogicalExpr::CheckWithType(){
 //Int/float only
 Type* RelationalExpr::CheckWithType(){
   //One way to do it
-  if(left->type->Type::IsConvertibleTo(Type::intType) &&
-     left->type->Type::IsConvertibleTo(Type::floatType) &&
-     right->type->Type::IsConvertibleTo(Type::intType) &&
-     right->type->Type::IsConvertibleTo(Type::floatType) &&
+  if((left->type->Type::IsConvertibleTo(Type::intType) ||
+     left->type->Type::IsConvertibleTo(Type::floatType)) &&
+     (right->type->Type::IsConvertibleTo(Type::intType) ||
+     right->type->Type::IsConvertibleTo(Type::floatType)) &&
      left->type->Type::IsConvertibleTo(right->type)){
     return left->type;
   }
   else{
     ReportError::IncompatibleOperands(op, left->type, right->type);
-    return Type::errorType;
+    left->type = Type::errorType;
+    return left->type;
   }
 }
 
