@@ -40,7 +40,12 @@ void SymbolTable::addSymbol(string key, Decl* decl){
 }
 
 Decl* SymbolTable::lookup(string key, scope *s){
-  return s->at(key);
+  scope::iterator it;
+  it = s->find(key);
+  if (it != s->end()){
+    return s->at(key);
+  }
+  return NULL;
 }
 
 scope* SymbolTable::currScope(){
