@@ -10,7 +10,19 @@
 #include "symtable.h"
 #include "errors.h"
 
+//Updates expr type and returns that type.
+Type* BoolConstant::CheckWithType(){
+  type = Type::boolType;
+  return type;
+}
 
+//Updates expr type and returns that type.
+Type* FloatConstant::CheckWithType(){
+  type = Type::floatType;
+  return type;
+}
+
+//Updates expr type and returns that type.
 Type* IntConstant::CheckWithType(){
   type = Type::intType;
   return type;
