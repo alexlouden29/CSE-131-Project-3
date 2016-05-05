@@ -21,6 +21,9 @@ void VarDecl::CheckID(Identifier *id){
   if (d != NULL) {
     ReportError::DeclConflict(this, d);
   }
+  else{
+    symtable.addSymbol(s, sc);
+  }
 }
          
 Decl::Decl(Identifier *n) : Node(*n->GetLocation()) {
@@ -81,5 +84,9 @@ void FnDecl::PrintChildren(int indentLevel) {
     if (id) id->Print(indentLevel+1);
     if (formals) formals->PrintAll(indentLevel+1, "(formals) ");
     if (body) body->Print(indentLevel+1, "(body) ");
+}
+
+void FnDecl::CheckID( Identifier *id){
+  
 }
 
