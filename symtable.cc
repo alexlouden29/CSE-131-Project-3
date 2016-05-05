@@ -23,23 +23,35 @@ SymbolTable::SymbolTable(){
 }
 
 void SymbolTable::pushScope(scope s){
-  vector<scope>::iterator it;
-  it = scopes.begin();
-  scopes.insert(it, s);
+  //vector<scope>::iterator it;
+  //it = scopes.begin();
+  scopes.push_back(s);
 }
 
 void SymbolTable::popScope(){
-  vector<scope>::iterator it;
-  it = scopes.begin();
-  scopes.erase(it);
+  //vector<scope>::iterator it;
+  //it = scopes.begin();
+  scopes.pop_back();
 }
 
 void SymbolTable::addSymbol(string key, Decl* decl){
-  map<string, Decl*> m = scopes[0];
+  map<string, Decl*> m = scopes.back();
   m.insert(pair<string,Decl*>(key,decl));
 }
 
-Decl* SymbolTable::lookup(string key, scope *s){
+Decl* SymbolTable::lookup(string key){
+  Decl* d = NULL;
+  for(vector<scope>::reverse_iterator vectorIt = scopes.rbegin(); vectorIt != scopes.rend(); ++vectorIt){
+    scope *s = &vectorIt;
+    d = lookupInScope(key, s);
+    if(d != NULL){
+      break;
+    }
+  }
+  return d;
+}
+
+Decl* SymbolTable::lookupInScope(string key, scope *s){
   scope::iterator it;
   it = s->find(key);
   if (it != s->end()){

@@ -22,7 +22,7 @@ void VarDecl::CheckID(Identifier *id){
     ReportError::DeclConflict(this, d);
   }
   else{
-    symtable.addSymbol(s, sc);
+    symtable->addSymbol(s, d);
   }
 }
          
