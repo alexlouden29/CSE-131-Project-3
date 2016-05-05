@@ -10,6 +10,12 @@
 #include "symtable.h"
 #include "errors.h"
 
+
+Type* IntConstant::CheckWithType(){
+  type = Type::intType;
+  return type;
+}
+
 //Checks if variable is in scope, if not return error and set to errorType.
 Type* VarExpr::CheckWithType(){
   VarDecl* vType = (VarDecl*)Node::symtable->lookup(id->GetName());
@@ -17,7 +23,8 @@ Type* VarExpr::CheckWithType(){
     ReportError::IdentifierNotDeclared(this->GetIdentifier(), reasonT(1));
     return Type::errorType;
   }
-  return vType->GetType();
+  type = vType->GetType();
+  return type;
 }
 
 

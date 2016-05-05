@@ -61,6 +61,9 @@ class IntConstant : public Expr
     IntConstant(yyltype loc, int val);
     const char *GetPrintNameForNode() { return "IntConstant"; }
     void PrintChildren(int indentLevel);
+
+    //Check Function
+    Type* CheckWithType();
 };
 
 class FloatConstant: public Expr 
