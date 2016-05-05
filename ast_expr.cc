@@ -12,15 +12,44 @@
 
 /*** Expr Checks ***/
 
-//Use IncompatibleOperands(Operator *op, Type *lhs, Type *rhs)
-/*Type* AssignExpr::CheckWithType(){
-  
-  if(!left->Type::IsConvertibleTo(right)){
-    ReportError::IncompatibleOperands(op, left, right);
+//Checks for incompatible types between operands.
+Type* AssignExpr::CheckWithType(){
+  if(!left->type->Type::IsConvertibleTo(right->type)){
+    ReportError::IncompatibleOperands(op, left->type, right->type);
     return Type::errorType;
   }
-}*/
+  return left->type;
+}
 
+//Checks that both operands are boolean for logical expressions
+//Boolean only
+Type* LogicalExpr::CheckWithType(){
+  if(left->type->Type::IsConvertibleTo(Type::boolType) &&
+     right->type->Type::IsConvertibleTo(Type::boolType)){
+    return Type::boolType;
+  }
+  else{
+    ReportError::IncompatibleOperands(op, left->type, right->type);
+    return Type::errorType;
+  }
+}
+
+//Checks that operands match for comparative expressions
+//Int/float only
+Type* RelationalExpr::CheckWithType(){
+  //One way to do it
+  if(left->type->Type::IsConvertibleTo(Type::intType) &&
+     left->type->Type::IsConvertibleTo(Type::floatType) &&
+     right->type->Type::IsConvertibleTo(Type::intType) &&
+     right->type->Type::IsConvertibleTo(Type::floatType) &&
+     left->type->Type::IsConvertibleTo(right->type)){
+    return left->type;
+  }
+  else{
+    ReportError::IncompatibleOperands(op, left->type, right->type);
+    return Type::errorType;
+  }
+}
 
 /*** The four type setting expressions ***/
 
