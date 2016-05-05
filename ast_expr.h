@@ -105,6 +105,7 @@ class VarExpr : public Expr
     void PrintChildren(int indentLevel);
     Identifier *GetIdentifier() {return id;}
 
+  //Check Function
   Type* CheckWithType();
 };
 

@@ -10,6 +10,20 @@
 #include "symtable.h"
 #include "errors.h"
 
+/*** Expr Checks ***/
+
+//Use IncompatibleOperands(Operator *op, Type *lhs, Type *rhs)
+/*Type* AssignExpr::CheckWithType(){
+  
+  if(!left->Type::IsConvertibleTo(right)){
+    ReportError::IncompatibleOperands(op, left, right);
+    return Type::errorType;
+  }
+}*/
+
+
+/*** The four type setting expressions ***/
+
 //Updates expr type and returns that type.
 Type* BoolConstant::CheckWithType(){
   type = Type::boolType;
@@ -40,14 +54,8 @@ Type* VarExpr::CheckWithType(){
 }
 
 
-//Use IncompatibleOperands(Operator *op, Type *lhs, Type *rhs)
-/*Type* AssignExpr::CheckWithType(){
-  
-  if(!left->Type::IsConvertibleTo(right)){
-    ReportError::IncompatibleOperands(op, left, right);
-    return Type::errorType;
-  }
-}*/
+
+/*** Their Shit ***/
 
 IntConstant::IntConstant(yyltype loc, int val) : Expr(loc) {
     value = val;
