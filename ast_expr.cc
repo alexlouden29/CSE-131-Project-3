@@ -9,7 +9,11 @@
 #include "ast_decl.h"
 #include "symtable.h"
 
-//Type* VarExpr::CheckWithType(){}
+Type* VarExpr::CheckWithType(){
+  //Decl* vType = Node::symtable->lookup(id->GetName());
+  return this->type;
+}
+
 
 //Use IncompatibleOperands(Operator *op, Type *lhs, Type *rhs)
 /*Type* AssignExpr::CheckWithType(){

@@ -25,10 +25,13 @@ class Expr : public Stmt
   public:
     Expr(yyltype loc) : Stmt(loc) {}
     Expr() : Stmt() {}
+    Type* type;
 
     friend std::ostream& operator<< (std::ostream& stream, Expr * expr) {
         return stream << expr->GetPrintNameForNode();
     }
+
+  //Check Functions
   void Check() { CheckWithType(); }
   virtual Type* CheckWithType(){ return NULL; }
 };
@@ -93,7 +96,7 @@ class VarExpr : public Expr
     void PrintChildren(int indentLevel);
     Identifier *GetIdentifier() {return id;}
 
-  //Type* CheckWithType();
+  Type* CheckWithType();
 };
 
 class Operator : public Node 
@@ -157,7 +160,8 @@ class AssignExpr : public CompoundExpr
   public:
     AssignExpr(Expr *lhs, Operator *op, Expr *rhs) : CompoundExpr(lhs,op,rhs) {}
     const char *GetPrintNameForNode() { return "AssignExpr"; }
-
+  
+  //Check Function
   //Type* CheckWithType();
 };
 
