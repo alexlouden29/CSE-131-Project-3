@@ -34,7 +34,7 @@ void VarDecl::CheckID(Identifier *id){
   }
   else{
     //cout << "ADDING TO SYMTABLE" << endl;
-    symtable->addSymbol(str, d);
+    symtable->addSymbol(str, this);
     //cout << "added to symtable" << endl;
   }
 }
@@ -113,7 +113,6 @@ void FnDecl::CheckID( Identifier *id){
     v = formals->Nth(i);
     v->Check();
   }
-
   //need to call check on each stmt inside stmtblock
 }
 /*

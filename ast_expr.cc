@@ -12,7 +12,28 @@
 
 /*** Expr Checks ***/
 
-//Same as Relational, but needs seperate function
+/*Type* ArrayAccess::CheckWithType(){
+  Type* baseType = base->CheckWithType();
+  if(baseType->isInstanceOf(ArrayType)){
+    return baseType;
+  }
+  ReportError::NotAnArray((VarDecl)base->id);
+  base->type = Type::ErrorType;
+  return base->type;
+}*/
+
+//Checks that it is an int or float so that it can be incremented.
+Type* PostfixExpr::CheckWithType(){
+  if(left->type->Type::IsConvertibleTo(Type::intType) ||
+     left->type->Type::IsConvertibleTo(Type::floatType)){
+    return left->type;
+  }
+  ReportError::IncompatibleOperand(op, left->type);
+  left->type = Type::errorType;
+  return left->type;
+}
+
+//Same as Relational except for when left is null.
 Type* ArithmeticExpr::CheckWithType(){
   //One variable expr
   if(left == NULL){

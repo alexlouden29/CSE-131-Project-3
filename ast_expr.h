@@ -194,6 +194,9 @@ class PostfixExpr : public CompoundExpr
     PostfixExpr(Expr *lhs, Operator *op) : CompoundExpr(lhs,op) {}
     const char *GetPrintNameForNode() { return "PostfixExpr"; }
 
+   //Check Function
+   Type* CheckWithType();
+
 };
 
 class ConditionalExpr : public Expr
@@ -221,6 +224,9 @@ class ArrayAccess : public LValue
     ArrayAccess(yyltype loc, Expr *base, Expr *subscript);
     const char *GetPrintNameForNode() { return "ArrayAccess"; }
     void PrintChildren(int indentLevel);
+
+   //Check Function
+   //Type* CheckWithType();
 };
 
 /* Note that field access is used both for qualified names
