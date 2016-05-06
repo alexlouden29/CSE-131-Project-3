@@ -36,8 +36,9 @@ void Program::Check() {
         //Our Code
         //Create first scope.
         scope s;
-        Node::symtable->pushScope(s);
+        symtable->pushScope(s);
         //Start checking.
+        cout << "starting check" << endl;
         d->Check();
       }
     }

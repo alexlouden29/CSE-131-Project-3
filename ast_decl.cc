@@ -35,6 +35,7 @@ void VarDecl::CheckID(Identifier *id){
   else{
     cout << "ADDING " << str <<  " TO SYMTABLE" << endl;
     symtable->addSymbol(str, this);
+    sc = symtable->currScope();
     d = symtable->lookupInScope(str, sc);
     if(d!=NULL) {cout << "Good I guess" << endl;}
     //cout << "added to symtable" << endl;

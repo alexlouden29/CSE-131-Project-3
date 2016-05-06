@@ -63,6 +63,7 @@ Decl* SymbolTable::lookupInScope(string key, scope *s){
   it = s->find(key);
   //cout << "looping through something?" << endl;
   if (it != s->end()){
+    cout << "Was not at end" << endl;
     return s->at(key);
   }
   return NULL;
