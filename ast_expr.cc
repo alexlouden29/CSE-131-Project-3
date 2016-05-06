@@ -17,7 +17,7 @@ Type* ArithmeticExpr::CheckWithType(){
   //One variable expr
   if(left == NULL){
     if(right->type->Type::IsConvertibleTo(Type::intType) ||
-       right->type->Type::IsConvertibleTO(Type::floatType)){
+       right->type->Type::IsConvertibleTo(Type::floatType)){
       return right->type;
     }
     ReportError::IncompatibleOperand(op, right->type);
