@@ -54,6 +54,20 @@ void StmtBlock::PrintChildren(int indentLevel) {
     stmts->PrintAll(indentLevel+1);
 }
 
+void StmtBlock::Check(){
+    if(Node::symtable->forFlag == false || Node::symtable->whileFlag == false
+       || Node::symtable->ifFlag == false){
+        scope s;
+        Node::symtable->pushScope(s);
+    }
+    List<Stmt*> *stmtList = this->stmts;
+    Stmt *stmt = NULL;
+    for(int i = 0; i < stmtList->NumElements(); i++){
+        stmt = stmtList->Nth(i);
+        Stmt::Check();
+    }
+}
+
 DeclStmt::DeclStmt(Decl *d) {
     Assert(d != NULL);
     (decl=d)->SetParent(this);
@@ -63,10 +77,15 @@ void DeclStmt::PrintChildren(int indentLevel) {
     decl->Print(indentLevel+1);
 }
 
+void DeclStmt::Check(){
+    decl->CheckID(decl->GetIdentifier());
+}
+
 ConditionalStmt::ConditionalStmt(Expr *t, Stmt *b) { 
     Assert(t != NULL && b != NULL);
     (test=t)->SetParent(this); 
     (body=b)->SetParent(this);
+    
 }
 
 ForStmt::ForStmt(Expr *i, Expr *t, Expr *s, Stmt *b): LoopStmt(t, b) { 
@@ -75,6 +94,7 @@ ForStmt::ForStmt(Expr *i, Expr *t, Expr *s, Stmt *b): LoopStmt(t, b) {
     step = s;
     if ( s )
       (step=s)->SetParent(this);
+    
 }
 
 void ForStmt::PrintChildren(int indentLevel) {
@@ -85,9 +105,47 @@ void ForStmt::PrintChildren(int indentLevel) {
     body->Print(indentLevel+1, "(body) ");
 }
 
+void ForStmt::Check(){
+    scope s;
+    Node::symtable->pushScope(s);
+    Node::symtable->forFlag = true;
+    Expr *e = this ->init;
+    e->CheckWithType();
+    Expr *t = this -> test;
+    t -> CheckWithType();
+    Expr *step = this -> step;
+    step -> CheckWithType();
+    Stmt *stmt = this -> body;
+    stmt->Check();
+    Node::symtable->forFlag = false;
+    if(Node::symtable->breakFlag != true){
+        Node::symtable->popScope();
+    }
+    else{
+        Node::symtable->breakFlag = false;
+    }
+}
+
 void WhileStmt::PrintChildren(int indentLevel) {
     test->Print(indentLevel+1, "(test) ");
     body->Print(indentLevel+1, "(body) ");
+}
+
+void WhileStmt::Check(){
+    scope s;
+    Node::symtable->pushScope(s);
+    Node::symtable->whileFlag = true;
+    Expr *t = this -> test;
+    t -> CheckWithType();
+    Stmt *stmt = this -> body;
+    stmt->Check();
+    Node::symtable->whileFlag = false;
+    if(Node::symtable->breakFlag != true){
+        Node::symtable->popScope();
+    }
+    else{
+        Node::symtable->breakFlag = false;
+    }
 }
 
 IfStmt::IfStmt(Expr *t, Stmt *tb, Stmt *eb): ConditionalStmt(t, tb) { 
@@ -102,6 +160,25 @@ void IfStmt::PrintChildren(int indentLevel) {
     if (elseBody) elseBody->Print(indentLevel+1, "(else) ");
 }
 
+void IfStmt::Check(){
+    scope s;
+    Node::symtable->pushScope(s);
+    Node::symtable->ifFlag = true;
+    Expr *t = this -> test;
+    t -> CheckWithType();
+    Stmt *stmtThen = this -> body;
+    stmtThen->Check();
+    Stmt *stmtElse = this -> elseBody;
+    stmtElse -> Check();
+    Node::symtable->ifFlag = false;
+    if(Node::symtable->breakFlag != true){
+        Node::symtable->popScope();
+    }
+    else{
+        Node::symtable->breakFlag = false;
+    }
+}
+
 
 ReturnStmt::ReturnStmt(yyltype loc, Expr *e) : Stmt(loc) { 
     expr = e;
@@ -111,6 +188,11 @@ ReturnStmt::ReturnStmt(yyltype loc, Expr *e) : Stmt(loc) {
 void ReturnStmt::PrintChildren(int indentLevel) {
     if ( expr ) 
       expr->Print(indentLevel+1);
+}
+
+void ReturnStmt::Check(){
+    Expr *e = this->expr;
+    e-> CheckWithType();
 }
 
 SwitchLabel::SwitchLabel(Expr *l, Stmt *s) {
@@ -144,3 +226,16 @@ void SwitchStmt::PrintChildren(int indentLevel) {
     if (def) def->Print(indentLevel+1);
 }
 
+void BreakStmt::Check(){
+    if(Node::symtable->whileFlag != true || Node::symtable->forFlag != true){
+        ReportError::BreakOutsideLoop(this);
+    }
+    Node::symtable->breakFlag = true;
+    Node::symtable->popScope();
+}
+
+void ContinueStmt::Check(){
+    if(Node::symtable->whileFlag != true || Node::symtable->forFlag != true){
+        ReportError::ContinueOutsideLoop(this);
+    }
+}
