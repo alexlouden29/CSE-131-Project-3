@@ -119,6 +119,10 @@ void FnDecl::CheckID( Identifier *id){
   Stmt *stmtBody = this->body;
   Node::symtable->returnType = this->returnType;
   stmtBody->Check();
+
+  if(Node::symtable->returnFlag == true){
+    ReportError::ReturnMissing(this);
+  }
   
   //popping scope
   symtable->popScope();

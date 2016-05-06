@@ -191,8 +191,12 @@ void ReturnStmt::PrintChildren(int indentLevel) {
 }
 
 void ReturnStmt::Check(){
+    Node::symtable->returnFlag = true;
     Expr *e = this->expr;
-    e-> CheckWithType();
+    Type * type = e-> CheckWithType();
+    if(Node::symtable->returnType != type){
+        ReportError::ReturnMismatch(this, type, Node::symtable->returnType);
+    }
 }
 
 SwitchLabel::SwitchLabel(Expr *l, Stmt *s) {
