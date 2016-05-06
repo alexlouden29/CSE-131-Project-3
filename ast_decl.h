@@ -57,6 +57,7 @@ class VarDecl : public Decl
     void PrintChildren(int indentLevel);
     Type *GetType() const { return type; }
 
+    //Check function
     void CheckID(Identifier *id);
 };
 
@@ -86,6 +87,7 @@ class FnDecl : public Decl
     Type *GetType() const { return returnType; }
     List<VarDecl*> *GetFormals() {return formals;}
 
+    //Check function
     void CheckID(Identifier *id);
 };
 

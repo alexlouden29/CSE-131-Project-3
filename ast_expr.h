@@ -141,6 +141,10 @@ class ArithmeticExpr : public CompoundExpr
     ArithmeticExpr(Expr *lhs, Operator *op, Expr *rhs) : CompoundExpr(lhs,op,rhs) {}
     ArithmeticExpr(Operator *op, Expr *rhs) : CompoundExpr(op,rhs) {}
     const char *GetPrintNameForNode() { return "ArithmeticExpr"; }
+   
+    //Check Function
+    Type* CheckWithType();
+
 };
 
 class RelationalExpr : public CompoundExpr 
@@ -158,6 +162,9 @@ class EqualityExpr : public CompoundExpr
   public:
     EqualityExpr(Expr *lhs, Operator *op, Expr *rhs) : CompoundExpr(lhs,op,rhs) {}
     const char *GetPrintNameForNode() { return "EqualityExpr"; }
+   
+    //Check function
+    Type* CheckWithType();
 };
 
 class LogicalExpr : public CompoundExpr 

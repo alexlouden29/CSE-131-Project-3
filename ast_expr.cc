@@ -12,6 +12,44 @@
 
 /*** Expr Checks ***/
 
+//Same as Relational, but needs seperate function
+Type* ArithmeticExpr::CheckWithType(){
+  //One variable expr
+  if(left == NULL){
+    if(right->type->Type::IsConvertibleTo(Type::intType) ||
+       right->type->Type::IsConvertibleTO(Type::floatType)){
+      return right->type;
+    }
+    ReportError::IncompatibleOperand(op, right->type);
+    right->type = Type::errorType;
+    return right->type;
+  }
+  //Two variable expr
+  //One way to do it
+  if((left->type->Type::IsConvertibleTo(Type::intType) ||
+     left->type->Type::IsConvertibleTo(Type::floatType)) &&
+     (right->type->Type::IsConvertibleTo(Type::intType) ||
+     right->type->Type::IsConvertibleTo(Type::floatType)) &&
+     left->type->Type::IsConvertibleTo(right->type)){
+    return left->type;
+  }
+  else{
+    ReportError::IncompatibleOperands(op, left->type, right->type);
+    left->type = Type::errorType;
+    return left->type;
+  }
+}
+
+//Same as assignExpr, checks that types are the same.
+Type* EqualityExpr::CheckWithType(){
+  if(!left->type->Type::IsConvertibleTo(right->type)){
+    ReportError::IncompatibleOperands(op, left->type, right->type);
+    left->type = Type::errorType;
+    return left->type;
+  }
+  return left->type;
+}
+
 //Checks for incompatible types between operands.
 Type* AssignExpr::CheckWithType(){
   if(!left->type->Type::IsConvertibleTo(right->type)){
@@ -37,7 +75,7 @@ Type* LogicalExpr::CheckWithType(){
 }
 
 //Checks that operands match for comparative expressions
-//Int/float only
+//Int or float only
 Type* RelationalExpr::CheckWithType(){
   //One way to do it
   if((left->type->Type::IsConvertibleTo(Type::intType) ||
