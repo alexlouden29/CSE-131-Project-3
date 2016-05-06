@@ -35,8 +35,11 @@ void SymbolTable::popScope(){
 }
 
 void SymbolTable::addSymbol(string key, Decl* decl){
-  map<string, Decl*> m = scopes.front();
+  //cout << "PULLING TOP SCOPE" << endl;
+  scope m = scopes.front();
+  //cout << "INSERTING" << endl;
   m.insert(pair<string,Decl*>(key,decl));
+  //cout << "INSERTED, DONE" << endl;
 }
 
 Decl* SymbolTable::lookup(string key){
@@ -52,8 +55,11 @@ Decl* SymbolTable::lookup(string key){
 }
 
 Decl* SymbolTable::lookupInScope(string key, scope *s){
+  //cout << "Making iterator" << endl;
   scope::iterator it;
+  //cout << "finding key" << endl;
   it = s->find(key);
+  //cout << "looping through something?" << endl;
   if (it != s->end()){
     return s->at(key);
   }

@@ -9,20 +9,33 @@
 #include "errors.h"
 #include "ast.h"
 
+//Check function for Variable Declarations
 void VarDecl::CheckID(Identifier *id){
-  Type *rtype = assignTo->CheckWithType();
-  if(!type->IsConvertibleTo(rtype)){
-    ReportError::InvalidInitialization(id, type, rtype);
-    type = Type::errorType;
+  //Check that types match if variable is set to something.
+  if(assignTo != NULL){
+    Type *rtype = assignTo->CheckWithType();
+    if(!type->IsConvertibleTo(rtype)){
+      ReportError::InvalidInitialization(id, type, rtype);
+      type = Type::errorType;
+    }
   }
-  string s = string( id->GetName() );
+  //cout << "PAST IF" << endl;
+  string str = string( id->GetName() );
+  //cout << "TRYING TO GET SCOPE" << endl;
   scope* sc = Node::symtable->currScope();
-  Decl *d = Node::symtable->lookup(s);
+  //cout << "GOT SCOPE" << endl;
+  //cout << "Trying to check symtable" << endl;
+  Decl *d = Node::symtable->lookupInScope(str, sc);
+  //cout << "GOT SYMTABLE" << endl;
+  //Check if variable is already present.
   if (d != NULL) {
+    //cout << "REPORTING ERROR" << endl;
     ReportError::DeclConflict(this, d);
   }
   else{
-    symtable->addSymbol(s, d);
+    //cout << "ADDING TO SYMTABLE" << endl;
+    symtable->addSymbol(str, d);
+    //cout << "added to symtable" << endl;
   }
 }
          
