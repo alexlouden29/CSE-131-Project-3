@@ -20,6 +20,7 @@ SymbolTable::SymbolTable(){
   doWhileFlag = false;
   switchFlag = false;
   breakFlag = false;
+  returnFlag = false;
   Type *returnType = NULL;
 }
 
@@ -37,7 +38,7 @@ void SymbolTable::popScope(){
 
 void SymbolTable::addSymbol(string key, Decl* decl){
   //cout << "PULLING TOP SCOPE" << endl;
-  scope m = scopes.front();
+  scope m = scopes.back();
   //cout << "INSERTING" << endl;
   m.insert(pair<string,Decl*>(key,decl));
   //cout << "INSERTED, DONE" << endl;

@@ -22,10 +22,10 @@ void VarDecl::CheckID(Identifier *id){
   //cout << "PAST IF" << endl;
   string str = string( id->GetName() );
   //cout << "TRYING TO GET SCOPE" << endl;
-  scope* sc = Node::symtable->currScope();
+  scope* sc = symtable->currScope();
   //cout << "GOT SCOPE" << endl;
   //cout << "Trying to check symtable" << endl;
-  Decl *d = Node::symtable->lookupInScope(str, sc);
+  Decl *d = symtable->lookupInScope(str, sc);
   //cout << "GOT SYMTABLE" << endl;
   //Check if variable is already present.
   if (d != NULL) {
@@ -33,8 +33,10 @@ void VarDecl::CheckID(Identifier *id){
     ReportError::DeclConflict(this, d);
   }
   else{
-    //cout << "ADDING TO SYMTABLE" << endl;
+    cout << "ADDING " << str <<  " TO SYMTABLE" << endl;
     symtable->addSymbol(str, this);
+    d = symtable->lookupInScope(str, sc);
+    if(d!=NULL) {cout << "Good I guess" << endl;}
     //cout << "added to symtable" << endl;
   }
 }
