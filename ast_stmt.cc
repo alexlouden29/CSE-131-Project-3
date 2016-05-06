@@ -31,12 +31,13 @@ void Program::Check() {
     // sample test - not the actual working code
     // replace it with your own implementation
     if ( decls->NumElements() > 0 ) {
+      cout << "Create first scope." << endl;
+      scope s;
+      cout << &s << endl;
+      symtable->pushScope(&s);
       for ( int i = 0; i < decls->NumElements(); ++i ) {
         Decl *d = decls->Nth(i);
         //Our Code
-        //Create first scope.
-        scope s;
-        symtable->pushScope(s);
         //Start checking.
         cout << "starting check" << endl;
         d->Check();
@@ -59,7 +60,7 @@ void StmtBlock::Check(){
     if(Node::symtable->forFlag == false || Node::symtable->whileFlag == false
        || Node::symtable->ifFlag == false){
         scope s;
-        Node::symtable->pushScope(s);
+        Node::symtable->pushScope(&s);
     }
     List<Stmt*> *stmtList = this->stmts;
     Stmt *stmt = NULL;
@@ -108,7 +109,7 @@ void ForStmt::PrintChildren(int indentLevel) {
 
 void ForStmt::Check(){
     scope s;
-    Node::symtable->pushScope(s);
+    Node::symtable->pushScope(&s);
     Node::symtable->forFlag = true;
     Expr *e = this ->init;
     e->CheckWithType();
@@ -134,7 +135,7 @@ void WhileStmt::PrintChildren(int indentLevel) {
 
 void WhileStmt::Check(){
     scope s;
-    Node::symtable->pushScope(s);
+    Node::symtable->pushScope(&s);
     Node::symtable->whileFlag = true;
     Expr *t = this -> test;
     t -> CheckWithType();
@@ -163,7 +164,7 @@ void IfStmt::PrintChildren(int indentLevel) {
 
 void IfStmt::Check(){
     scope s;
-    Node::symtable->pushScope(s);
+    Node::symtable->pushScope(&s);
     Node::symtable->ifFlag = true;
     Expr *t = this -> test;
     t -> CheckWithType();

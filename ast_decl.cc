@@ -23,6 +23,7 @@ void VarDecl::CheckID(Identifier *id){
   string str = string( id->GetName() );
   //cout << "TRYING TO GET SCOPE" << endl;
   scope* sc = symtable->currScope();
+  cout << sc << endl;
   //cout << "GOT SCOPE" << endl;
   //cout << "Trying to check symtable" << endl;
   Decl *d = symtable->lookupInScope(str, sc);
@@ -105,7 +106,7 @@ void FnDecl::PrintChildren(int indentLevel) {
 void FnDecl::CheckID( Identifier *id){
   //pushing new scope
   scope s;
-  symtable->pushScope(s);
+  symtable->pushScope(&s);
 
   //how do i verify?
 

@@ -51,6 +51,7 @@ class Node  {
   protected:
     yyltype *location;
     Node *parent;
+    static SymbolTable *symtable;
 
   public:
     Node(yyltype loc);
@@ -69,7 +70,6 @@ class Node  {
     virtual void PrintChildren(int indentLevel)  {}
 
 
-    static SymbolTable *symtable;
     virtual void Check() {}
 };
    

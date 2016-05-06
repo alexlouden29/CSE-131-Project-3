@@ -16,9 +16,10 @@ using namespace std;
 typedef map<string, Decl*> scope;
 
 class SymbolTable {
+  protected:
+    vector<scope> *scopes;
 
   public:
-    vector<scope>scopes;
     SymbolTable(); //constructor
 
     bool ifFlag, elseFlag, elifFlag;
@@ -31,7 +32,7 @@ class SymbolTable {
     bool returnFlag;
     Type *returnType;
 
-    void pushScope(scope s);
+    void pushScope(scope *s);
     void popScope();
     void addSymbol(string key, Decl* decl);
     Decl* lookup(string key);
