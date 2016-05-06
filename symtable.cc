@@ -19,7 +19,8 @@ SymbolTable::SymbolTable(){
   funcFlag = false;
   doWhileFlag = false;
   switchFlag = false;
-  
+  breakFlag = false;
+  Type *returnType = NULL;
 }
 
 void SymbolTable::pushScope(scope s){
@@ -67,5 +68,5 @@ Decl* SymbolTable::lookupInScope(string key, scope *s){
 }
 
 scope* SymbolTable::currScope(){
-  return &scopes[0];
+  return &scopes.back();
 }

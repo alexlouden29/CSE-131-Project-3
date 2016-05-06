@@ -27,6 +27,8 @@ class SymbolTable {
     bool funcFlag;
     bool doWhileFlag; 
     bool switchFlag;
+    bool breakFlag;
+    Type *returnType;
 
     void pushScope(scope s);
     void popScope();
