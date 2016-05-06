@@ -29,7 +29,6 @@ Type* PostfixExpr::CheckWithType(){
     return left->type;
   }
   ReportError::IncompatibleOperand(op, left->type);
-  left->type = Type::errorType;
   return left->type;
 }
 
@@ -42,7 +41,6 @@ Type* ArithmeticExpr::CheckWithType(){
       return right->type;
     }
     ReportError::IncompatibleOperand(op, right->type);
-    right->type = Type::errorType;
     return right->type;
   }
   //Two variable expr
