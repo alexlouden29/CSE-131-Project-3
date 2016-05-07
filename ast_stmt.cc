@@ -63,7 +63,7 @@ void StmtBlock::Check(){
     Stmt *stmt = NULL;
     for(int i = 0; i < stmtList->NumElements(); i++){
         stmt = stmtList->Nth(i);
-        Stmt::Check();
+        stmt->Stmt::Check();
     }
 }
 
@@ -193,6 +193,7 @@ void ReturnStmt::Check(){
     Node::symtable->returnFlag = true;
     Expr *e = this->expr;
     Type * type = e-> CheckWithType();
+    if(type == Type::boolType){ cout<<"BOOLTYPE"<<endl;}
     if(Node::symtable->returnType != type){
         ReportError::ReturnMismatch(this, type, Node::symtable->returnType);
     }

@@ -109,12 +109,19 @@ void FnDecl::CheckID( Identifier *id){
   //need to call check on each stmt inside stmtblock
   Stmt *stmtBody = this->body;
   Node::symtable->returnType = this->returnType;
-  stmtBody->Check();
-
-  if(Node::symtable->returnFlag == true){
-    ReportError::ReturnMissing(this);
+  if(stmtBody != NULL){
+    stmtBody->Check();
+    cout<<"ONE"<<endl;
+    if(Node::symtable->returnFlag != true || Node::symtable -> returnType != Type::voidType){
+      cout<<"THREE"<<endl;
+      ReportError::ReturnMissing(this);
+      cout<<"FOUR"<<endl;
+    }
+    else{
+      Node::symtable->returnFlag = false;
+    }
   }
-  
+  cout<<"TWO"<<endl;
   //popping scope
   symtable->popScope();
 }
