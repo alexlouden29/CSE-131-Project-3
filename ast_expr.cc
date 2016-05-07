@@ -71,6 +71,7 @@ Type* EqualityExpr::CheckWithType(){
 
 //Checks for incompatible types between operands.
 Type* AssignExpr::CheckWithType(){
+  cout << "HI FROM ASSIGN EXPR FUCKER" << endl;
   if(!left->type->Type::IsConvertibleTo(right->type)){
     ReportError::IncompatibleOperands(op, left->type, right->type);
     left->type = Type::errorType;
@@ -97,17 +98,17 @@ Type* LogicalExpr::CheckWithType(){
 //Int or float only
 Type* RelationalExpr::CheckWithType(){
   //One way to do it
+  cout << "LEFT TYPE: " << left->CheckWithType() << "  RIGHT TYPE: " << right->CheckWithType() << endl;
   if((left->type->Type::IsConvertibleTo(Type::intType) ||
      left->type->Type::IsConvertibleTo(Type::floatType)) &&
      (right->type->Type::IsConvertibleTo(Type::intType) ||
      right->type->Type::IsConvertibleTo(Type::floatType)) &&
      left->type->Type::IsConvertibleTo(right->type)){
-    return left->type;
+    return Type::boolType;
   }
   else{
     ReportError::IncompatibleOperands(op, left->type, right->type);
-    left->type = Type::errorType;
-    return left->type;
+    return Type::errorType;
   }
 }
 
@@ -115,18 +116,21 @@ Type* RelationalExpr::CheckWithType(){
 
 //Updates expr type and returns that type.
 Type* BoolConstant::CheckWithType(){
+  cout << "HI FROM BOOLCONSTANT FUCKER" << endl;
   type = Type::boolType;
   return type;
 }
 
 //Updates expr type and returns that type.
 Type* FloatConstant::CheckWithType(){
+  cout << "HI FROM FLOATCONSTANT FUCKER" << endl;
   type = Type::floatType;
   return type;
 }
 
 //Updates expr type and returns that type.
 Type* IntConstant::CheckWithType(){
+  cout << "HI FROM INTCONSTANT FUCKER" << endl;
   type = Type::intType;
   return type;
 }
@@ -135,6 +139,7 @@ Type* IntConstant::CheckWithType(){
 Type* VarExpr::CheckWithType(){
   VarDecl* vType = (VarDecl*)Node::symtable->lookup(id->GetName());
   if(vType == NULL){ 
+    cout << "HI FROM VAR EXPR FUCKER" << endl;
     ReportError::IdentifierNotDeclared(this->GetIdentifier(), reasonT(1));
     return Type::errorType;
   }
