@@ -24,91 +24,114 @@
 
 //Checks that it is an int or float so that it can be incremented.
 Type* PostfixExpr::CheckWithType(){
-  if(left->type->Type::IsConvertibleTo(Type::intType) ||
-     left->type->Type::IsConvertibleTo(Type::floatType)){
-    return left->type;
+  if(left->CheckWithType()->Type::IsConvertibleTo(Type::intType) ||
+     left->CheckWithType()->Type::IsConvertibleTo(Type::floatType)){
+    type = left->type;
+    return type;
   }
   ReportError::IncompatibleOperand(op, left->type);
-  return left->type;
+  type = Type::errorType;
+  return type;
 }
 
 //Same as Relational except for when left is null.
 Type* ArithmeticExpr::CheckWithType(){
   //One variable expr
   if(left == NULL){
-    if(right->type->Type::IsConvertibleTo(Type::intType) ||
-       right->type->Type::IsConvertibleTo(Type::floatType)){
-      return right->type;
+    if(right->CheckWithType()->Type::IsConvertibleTo(Type::intType) ||
+       right->CheckWithType()->Type::IsConvertibleTo(Type::floatType)){
+      type = right->type;
+      return type;
     }
-    ReportError::IncompatibleOperand(op, right->type);
-    return right->type;
+    ReportError::IncompatibleOperand(op, right->CheckWithType());
+    type = Type::errorType;
+    return type;
   }
   //Two variable expr
   //One way to do it
-  if((left->type->Type::IsConvertibleTo(Type::intType) ||
+  //cout << "HI FROM ARITHMETIC EXPR FUCKER" << endl;
+  if((left->CheckWithType()->Type::IsConvertibleTo(Type::intType) ||
      left->type->Type::IsConvertibleTo(Type::floatType)) &&
-     (right->type->Type::IsConvertibleTo(Type::intType) ||
+     (right->CheckWithType()->Type::IsConvertibleTo(Type::intType) ||
      right->type->Type::IsConvertibleTo(Type::floatType)) &&
      left->type->Type::IsConvertibleTo(right->type)){
-    return left->type;
+    type = left->type;
+    return type;
   }
   else{
+    //cout << "HI FROM ARITHMETIC ERROR FUCKER" << endl;
     ReportError::IncompatibleOperands(op, left->type, right->type);
-    left->type = Type::errorType;
-    return left->type;
+    type = Type::errorType;
+    return type;
   }
 }
 
 //Same as assignExpr, checks that types are the same.
 Type* EqualityExpr::CheckWithType(){
+  //cout << "HI FROM EQUALITY EXPR FUCKER" << endl;
+  left->CheckWithType();
+  right->CheckWithType();
   if(!left->type->Type::IsConvertibleTo(right->type)){
+    //cout << "EQUALITY ERROR FUCKER" << endl;
     ReportError::IncompatibleOperands(op, left->type, right->type);
-    left->type = Type::errorType;
-    return left->type;
+    type = Type::errorType;
+    return type;
   }
-  return left->type;
+  type = Type::boolType;
+  return type;
 }
 
 //Checks for incompatible types between operands.
 Type* AssignExpr::CheckWithType(){
-  cout << "HI FROM ASSIGN EXPR FUCKER" << endl;
+  //cout << "HI FROM ASSIGN EXPR FUCKER" << endl;
+  left->CheckWithType();
+  right->CheckWithType();
   if(!left->type->Type::IsConvertibleTo(right->type)){
+    //cout << "ASSIGN ERROR FUCKER" << endl;
     ReportError::IncompatibleOperands(op, left->type, right->type);
-    left->type = Type::errorType;
-    return left->type;
+    type = Type::errorType;
+    return type;
   }
-  return left->type;
+  type = left->type;
+  return type;
 }
 
 //Checks that both operands are boolean for logical expressions
 //Boolean only
 Type* LogicalExpr::CheckWithType(){
+  left->CheckWithType();
+  right->CheckWithType();
   if(left->type->Type::IsConvertibleTo(Type::boolType) &&
      right->type->Type::IsConvertibleTo(Type::boolType)){
-    return Type::boolType;
+    type = Type::boolType;
+    return type;
   }
   else{
     ReportError::IncompatibleOperands(op, left->type, right->type);
-    left->type = Type::errorType;
-    return left->type;
+    type = Type::errorType;
+    return type;
   }
 }
 
 //Checks that operands match for comparative expressions
 //Int or float only
 Type* RelationalExpr::CheckWithType(){
+  //Force types to be set.
+  left->CheckWithType();
+  right->CheckWithType();
   //One way to do it
-  cout << "LEFT TYPE: " << left->CheckWithType() << "  RIGHT TYPE: " << right->CheckWithType() << endl;
   if((left->type->Type::IsConvertibleTo(Type::intType) ||
      left->type->Type::IsConvertibleTo(Type::floatType)) &&
      (right->type->Type::IsConvertibleTo(Type::intType) ||
      right->type->Type::IsConvertibleTo(Type::floatType)) &&
      left->type->Type::IsConvertibleTo(right->type)){
-    return Type::boolType;
+    type = Type::boolType;
+    return type;
   }
   else{
     ReportError::IncompatibleOperands(op, left->type, right->type);
-    return Type::errorType;
+    type = Type::errorType;
+    return type;
   }
 }
 
@@ -116,34 +139,37 @@ Type* RelationalExpr::CheckWithType(){
 
 //Updates expr type and returns that type.
 Type* BoolConstant::CheckWithType(){
-  cout << "HI FROM BOOLCONSTANT FUCKER" << endl;
+  //cout << "HI FROM BOOLCONSTANT FUCKER" << endl;
   type = Type::boolType;
   return type;
 }
 
 //Updates expr type and returns that type.
 Type* FloatConstant::CheckWithType(){
-  cout << "HI FROM FLOATCONSTANT FUCKER" << endl;
+  //cout << "HI FROM FLOATCONSTANT FUCKER" << endl;
   type = Type::floatType;
   return type;
 }
 
 //Updates expr type and returns that type.
 Type* IntConstant::CheckWithType(){
-  cout << "HI FROM INTCONSTANT FUCKER" << endl;
+  //cout << "HI FROM INTCONSTANT FUCKER" << endl;
   type = Type::intType;
   return type;
 }
 
 //Checks if variable is in scope, if not return error and set to errorType.
 Type* VarExpr::CheckWithType(){
+  //cout << "HI FROM VAR EXPR FUCKER" << endl;
   VarDecl* vType = (VarDecl*)Node::symtable->lookup(id->GetName());
   if(vType == NULL){ 
-    cout << "HI FROM VAR EXPR FUCKER" << endl;
+    //cout << "HI FROM VAR EXPR ERROR FUCKER" << endl;
     ReportError::IdentifierNotDeclared(this->GetIdentifier(), reasonT(1));
-    return Type::errorType;
+    type = Type::errorType;
+    return type;
   }
   type = vType->GetType();
+  //cout << "MOTHERFUCKING TYPE: " << type << endl;
   return type;
 }
 

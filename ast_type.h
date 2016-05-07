@@ -56,7 +56,7 @@ class Type : public Node
     virtual void PrintToStream(ostream& out) { out << typeName; }
     friend ostream& operator<<(ostream& out, Type *t) { t->PrintToStream(out); return out; }
     virtual bool IsEquivalentTo(Type *other) { return (this == other); }
-    virtual bool IsConvertibleTo(Type *other) { return (this == other || this == errorType); }
+    virtual bool IsConvertibleTo(Type *other) { return (this == other || other == errorType); }
     bool IsNumeric();
     bool IsVector();
     bool IsMatrix();
