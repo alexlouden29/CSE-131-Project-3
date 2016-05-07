@@ -31,17 +31,12 @@ void Program::Check() {
     // sample test - not the actual working code
     // replace it with your own implementation
     if ( decls->NumElements() > 0 ) {
-      cout << "Create first scope." << endl;
-      cout << Node::symtable->forFlag<<endl;
-      cout << Node::symtable->size() << endl;
       scope s;
-      cout << &s << endl;
       symtable->pushScope(&s);
       for ( int i = 0; i < decls->NumElements(); ++i ) {
         Decl *d = decls->Nth(i);
         //Our Code
         //Start checking.
-        cout << "starting check" << endl;
         d->Check();
       }
     }

@@ -19,27 +19,16 @@ void VarDecl::CheckID(Identifier *id){
       type = Type::errorType;
     }
   }
-  //cout << "PAST IF" << endl;
   string str = string( id->GetName() );
-  //cout << "TRYING TO GET SCOPE" << endl;
   scope* sc = symtable->currScope();
-  cout << sc << endl;
-  //cout << "GOT SCOPE" << endl;
-  //cout << "Trying to check symtable" << endl;
   Decl *d = symtable->lookupInScope(str, sc);
-  //cout << "GOT SYMTABLE" << endl;
   //Check if variable is already present.
   if (d != NULL) {
-    //cout << "REPORTING ERROR" << endl;
     ReportError::DeclConflict(this, d);
   }
   else{
-    cout << "ADDING " << str <<  " TO SYMTABLE" << endl;
     symtable->addSymbol(str, this);
     sc = symtable->currScope();
-    d = symtable->lookupInScope(str, sc);
-    if(d!=NULL) {cout << "Good I guess" << endl;}
-    //cout << "added to symtable" << endl;
   }
 }
          
