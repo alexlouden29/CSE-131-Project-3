@@ -61,12 +61,10 @@ void StmtBlock::Check(){
     }
     List<Stmt*> *stmtList = this->stmts;
     Stmt *stmt = NULL;
-    cout<<"STMT BLOCK"<<endl;
     for(int i = 0; i < stmtList->NumElements(); i++){
         stmt = stmtList->Nth(i);
-        stmt->Stmt::Check();
+        stmt->	Check();
     }
-    cout<<"DONE WITH STMT BLOCK"<<endl;
 }
 
 DeclStmt::DeclStmt(Decl *d) {
@@ -192,7 +190,6 @@ void ReturnStmt::PrintChildren(int indentLevel) {
 }
 
 void ReturnStmt::Check(){
-    cout<<"RETURN STMT"<<endl;
     Node::symtable->returnFlag = true;
     Expr *e = this->expr;
     Type * type = e-> CheckWithType();

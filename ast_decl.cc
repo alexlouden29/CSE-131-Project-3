@@ -115,17 +115,13 @@ void FnDecl::CheckID( Identifier *id){
   Node::symtable->returnType = this->returnType;
   if(stmtBody != NULL){
     stmtBody->Check();
-    cout<<"ONE"<<endl;
     if( Node::symtable->returnType != Type::voidType && Node::symtable->returnFlag == false ){
-      cout<<"THREE"<<endl;
       ReportError::ReturnMissing(this);
-      cout<<"FOUR"<<endl;
     }
     else{
       Node::symtable->returnFlag = false;
     }
   }
-  cout<<"TWO"<<endl;
   //popping scope
   symtable->popScope();
 }
