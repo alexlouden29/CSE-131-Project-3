@@ -11,6 +11,7 @@
 
 //Check function for Variable Declarations
 void VarDecl::CheckID(Identifier *id){
+
   //Check that types match if variable is set to something.
   string str = string( id->GetName() );
   scope* sc = symtable->currScope();
@@ -21,7 +22,7 @@ void VarDecl::CheckID(Identifier *id){
   }
   else{
     symtable->addSymbol(str, this);
-    sc = symtable->currScope();
+    //sc = symtable->currScope();
   }
   if(assignTo != NULL){
     //cout << "ASSIGN TO IS NOT NULL" << endl;
@@ -95,16 +96,18 @@ void FnDecl::PrintChildren(int indentLevel) {
 }
 
 void FnDecl::CheckID( Identifier *id){
+  Node::symtable->funcFlag = true;
   //pushing new scope
   scope s;
   symtable->pushScope(&s);
 
   //how do i verify?
 
+  //TODO: Check if there's a correct number of formals in FnCall
   //adding formals into scope
   List<VarDecl*> *formals = this->GetFormals();
   if(formals->NumElements() > 0){
-    VarDecl *v = NULL;
+    Decl *v = NULL;
     for(int i = 0; i < formals->NumElements(); i++){
       v = formals->Nth(i);
       v->Check();
