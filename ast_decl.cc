@@ -103,10 +103,12 @@ void FnDecl::CheckID( Identifier *id){
 
   //adding formals into scope
   List<VarDecl*> *formals = this->GetFormals();
-  VarDecl *v = NULL;
-  for(int i = 0; i < formals->NumElements(); i++){
-    v = formals->Nth(i);
-    v->Check();
+  if(formals->NumElements() > 0){
+    VarDecl *v = NULL;
+    for(int i = 0; i < formals->NumElements(); i++){
+      v = formals->Nth(i);
+      v->Check();
+    }
   }
   //need to call check on each stmt inside stmtblock
   Stmt *stmtBody = this->body;

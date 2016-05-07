@@ -65,7 +65,6 @@ void StmtBlock::Check(){
         stmt = stmtList->Nth(i);
         stmt->	Check();
     }
-    cout<<"after stmt block"<<endl;
 }
 
 DeclStmt::DeclStmt(Decl *d) {
@@ -149,7 +148,6 @@ void WhileStmt::Check(){
         }
     }
     Node::symtable->whileFlag = false;
-    cout<<"OUTSIDE WHILE"<<endl;
 }
 
 IfStmt::IfStmt(Expr *t, Stmt *tb, Stmt *eb): ConditionalStmt(t, tb) { 
@@ -172,8 +170,11 @@ void IfStmt::Check(){
     t -> CheckWithType();
     Stmt *stmtThen = this -> body;
     stmtThen->Check();
+    
     Stmt *stmtElse = this -> elseBody;
-    stmtElse -> Check();
+    if (stmtElse != NULL){
+        stmtElse -> Check();
+    }
     Node::symtable->ifFlag = false;
     if(Node::symtable->breakFlag != true){
         Node::symtable->popScope();
@@ -242,7 +243,6 @@ void BreakStmt::Check(){
     else{
         ReportError::BreakOutsideLoop(this);
     }
-    cout<<"after break"<<endl;
 }
 
 void ContinueStmt::Check(){
@@ -251,5 +251,4 @@ void ContinueStmt::Check(){
     else{
         ReportError::ContinueOutsideLoop(this);
     }
-    cout<<"after continue"<<endl;
 }
