@@ -13,11 +13,15 @@
 void VarDecl::CheckID(Identifier *id){
   //Check that types match if variable is set to something.
   if(assignTo != NULL){
+    cout << "ASSIGN TO IS NOT NULL" << endl;
     Type *rtype = assignTo->CheckWithType();
     if(!type->IsConvertibleTo(rtype)){
+      cout << "SETTING TO ERROR TYPE" << endl;
       ReportError::InvalidInitialization(id, type, rtype);
       type = Type::errorType;
+      return;
     }
+    type = rtype;
   }
   string str = string( id->GetName() );
   scope* sc = symtable->currScope();
