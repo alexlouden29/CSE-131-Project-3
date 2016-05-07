@@ -65,6 +65,7 @@ void StmtBlock::Check(){
         stmt = stmtList->Nth(i);
         stmt->	Check();
     }
+    cout<<"after stmt block"<<endl;
 }
 
 DeclStmt::DeclStmt(Decl *d) {
@@ -116,13 +117,13 @@ void ForStmt::Check(){
     step -> CheckWithType();
     Stmt *stmt = this -> body;
     stmt->Check();
-    Node::symtable->forFlag = false;
     if(Node::symtable->breakFlag != true){
         Node::symtable->popScope();
     }
     else{
         Node::symtable->breakFlag = false;
     }
+    Node::symtable->forFlag = false;
 }
 
 void WhileStmt::PrintChildren(int indentLevel) {
@@ -138,13 +139,17 @@ void WhileStmt::Check(){
     t -> CheckWithType();
     Stmt *stmt = this -> body;
     stmt->Check();
-    Node::symtable->whileFlag = false;
     if(Node::symtable->breakFlag != true){
         Node::symtable->popScope();
     }
     else{
         Node::symtable->breakFlag = false;
+        if(Node::symtable->ifFlag == true){
+            Node::symtable->popScope();
+        }
     }
+    Node::symtable->whileFlag = false;
+    cout<<"OUTSIDE WHILE"<<endl;
 }
 
 IfStmt::IfStmt(Expr *t, Stmt *tb, Stmt *eb): ConditionalStmt(t, tb) { 
@@ -230,15 +235,21 @@ void SwitchStmt::PrintChildren(int indentLevel) {
 }
 
 void BreakStmt::Check(){
-    if(Node::symtable->whileFlag != true || Node::symtable->forFlag != true){
+    if(Node::symtable->whileFlag == true || Node::symtable->forFlag == true){
+        Node::symtable->breakFlag = true;
+        Node::symtable->popScope();
+    }
+    else{
         ReportError::BreakOutsideLoop(this);
     }
-    Node::symtable->breakFlag = true;
-    Node::symtable->popScope();
+    cout<<"after break"<<endl;
 }
 
 void ContinueStmt::Check(){
-    if(Node::symtable->whileFlag != true || Node::symtable->forFlag != true){
+    if(Node::symtable->whileFlag == true || Node::symtable->forFlag == true){
+    }
+    else{
         ReportError::ContinueOutsideLoop(this);
     }
+    cout<<"after continue"<<endl;
 }
