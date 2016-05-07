@@ -38,6 +38,8 @@ class SymbolTable {
     Decl* lookup(string key);
     scope* currScope();
     Decl* lookupInScope(string key, scope *s);
+    int size();
+    int sizeInt;
    
 };
 

@@ -9,8 +9,17 @@
 #include "ast_decl.h"
 
 SymbolTable::SymbolTable(){
+  map<string, Decl*> s1;
+
   vector<scope> scopess;
+  cout <<"SOMETHING"<<endl;
+  cout<<scopess.size()<<endl;
   scopes = &scopess;
+  cout<<scopes->size()<<endl;
+  scopes->push_back(s1);
+  cout<<scopes->size()<<endl;
+  sizeInt = scopes -> size();
+
   ifFlag = false;
   elseFlag = false;
   elifFlag = false;
@@ -76,16 +85,23 @@ Decl* SymbolTable::lookupInScope(string key, scope *s){
   cout << scopes->size() << endl;
   int i = s->count(key);
   cout << "GOT COUNT SUCESSFULLY" << endl;
-  if(i > 0)
+  if(i > 0){
     cout << "IN IF" << endl;
     return s->at(key);
+  }
   return NULL;
 }
 
 scope* SymbolTable::currScope(){
   cout << "getting current scope" << endl;
   cout << &scopes->back() << endl;
-  if (&scopes->back() == NULL)
+  if (&scopes->back() == NULL){
     cout << "FUCK" << endl;
+  }
   return &(scopes->back());
+}
+
+int SymbolTable::size(){
+  cout<<"printing from symtable.cc    "<< this -> sizeInt << endl;
+  return this->sizeInt;
 }

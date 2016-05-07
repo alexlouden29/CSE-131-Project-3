@@ -89,6 +89,7 @@ class FnDecl : public Decl
 
     //Check function
     void CheckID(Identifier *id);
+    void CheckWithReturn();
 };
 
 class FormalsError : public FnDecl
