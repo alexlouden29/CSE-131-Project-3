@@ -116,7 +116,7 @@ void FnDecl::CheckID( Identifier *id){
   if(stmtBody != NULL){
     stmtBody->Check();
     cout<<"ONE"<<endl;
-    if(Node::symtable->returnFlag != true || Node::symtable -> returnType != Type::voidType){
+    if( Node::symtable->returnType != Type::voidType && Node::symtable->returnFlag == false ){
       cout<<"THREE"<<endl;
       ReportError::ReturnMissing(this);
       cout<<"FOUR"<<endl;
