@@ -12,13 +12,14 @@ SymbolTable::SymbolTable(){
   map<string, Decl*> s1;
 
   vector<scope> scopess;
-  cout <<"SOMETHING"<<endl;
+  cout <<"size of scopess"<<endl;
   cout<<scopess.size()<<endl;
+  cout<< "size of scopes after setting scopes to scopess"<<endl;
   scopes = &scopess;
   cout<<scopes->size()<<endl;
   scopes->push_back(s1);
+  cout<< "size after pushing something into vector: scopes"<<endl;
   cout<<scopes->size()<<endl;
-  sizeInt = scopes -> size();
 
   ifFlag = false;
   elseFlag = false;
@@ -102,6 +103,6 @@ scope* SymbolTable::currScope(){
 }
 
 int SymbolTable::size(){
-  cout<<"printing from symtable.cc    "<< this -> sizeInt << endl;
-  return this->sizeInt;
+  cout<<"printing from symtable.cc    "<< scopes->size() << endl;
+  return scopes->size();
 }
