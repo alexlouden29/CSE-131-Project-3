@@ -3,3 +3,7 @@ Despite being a bigger project in theory, so far Project 3 has felt more managea
 We started by writing out the header file and functions for our symboltable.  This first draft turned out to be fairly incorrect later on, but it helped us see where we might go next.  Next we attempted to write the check method for VarDecl, which actually came out well and has required few edits moving foreward.  Afterwards we focused on understanding how virtual was used to spread check() throughout the program, and also how we would go about saving the symbol table.  For the symbol table, we decided on a global variable declared in Node, but we have not done enough testing yet to know if it is correct.
 
 Next up was expr checks, which involved realizing that we needed to make a different virtual function CheckWithType() that returned the type of the expression so that other checks could access type information.  This has been going along well.  Currently we are working on statement checks, starting with Program which was tested and functional.  I will return with the rest of the project description.
+
+It became apparent that expression checks couldn't be tested without some basic statment checks since assignments can only occur in statement blocks.  Once the enviornment was set up, testing on expression began.  Major overhaul to type returning was required.  Array Access and Field access have been left for last, as they don't tie in as tightly with everything as other elements do.
+
+//Betty write about statment.

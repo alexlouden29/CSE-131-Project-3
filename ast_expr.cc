@@ -12,6 +12,8 @@
 
 /*** Expr Checks ***/
 
+//Field Access
+
 /*Type* ArrayAccess::CheckWithType(){
   Type* baseType = base->CheckWithType();
   if(baseType->isInstanceOf(ArrayType)){
