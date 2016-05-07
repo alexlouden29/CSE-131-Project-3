@@ -15,11 +15,11 @@ SymbolTable::SymbolTable(){
   cout <<"size of scopess"<<endl;
   cout<<scopess.size()<<endl;
   cout<< "size of scopes after setting scopes to scopess"<<endl;
-  scopes = &scopess;
-  cout<<scopes->size()<<endl;
-  scopes->push_back(s1);
+  scopes = scopess;
+  cout<<scopes.size()<<endl;
+  scopes.push_back(s1);
   cout<< "size after pushing something into vector: scopes"<<endl;
-  cout<<scopes->size()<<endl;
+  cout<<scopes.size()<<endl;
 
   ifFlag = false;
   elseFlag = false;
@@ -40,21 +40,21 @@ void SymbolTable::pushScope(scope *s){
   //it = scopes.begin();
   cout << "adding a new scope" << endl;
   cout << &s << endl;
-  cout << scopes->size() << endl;
-  scopes->push_back(*s);
-  cout << scopes->size() << endl;
+  cout << scopes.size() << endl;
+  scopes.push_back(*s);
+  cout << scopes.size() << endl;
 }
 
 void SymbolTable::popScope(){
   //vector<scope>::iterator it;
   //it = scopes.begin();
   cout << "removing scope" << endl;
-  scopes->pop_back();
+  scopes.pop_back();
 }
 
 void SymbolTable::addSymbol(string key, Decl* decl){
   cout << "Adding symbol" << endl;
-  scope* m = &scopes->back();
+  scope* m = &scopes.back();
   //cout << "INSERTING" << endl;
   m->insert(pair<string,Decl*>(key,decl));
   cout << m->count(key) << endl;
@@ -65,7 +65,7 @@ void SymbolTable::addSymbol(string key, Decl* decl){
 Decl* SymbolTable::lookup(string key){
   cout << "Looking up in all" << endl;
   Decl* d = NULL;
-  for(vector<scope>::reverse_iterator vectorIt = scopes->rbegin(); vectorIt != scopes->rend(); ++vectorIt){
+  for(vector<scope>::reverse_iterator vectorIt = scopes.rbegin(); vectorIt != scopes.rend(); ++vectorIt){
     scope* s = &(*vectorIt);
     d = lookupInScope(key, s);
     if(d != NULL){
@@ -83,7 +83,7 @@ Decl* SymbolTable::lookupInScope(string key, scope *s){
     cout << "Was not at end" << endl;
     return s->at(key);
   }*/
-  cout << scopes->size() << endl;
+  cout << scopes.size() << endl;
   int i = s->count(key);
   cout << "GOT COUNT SUCESSFULLY" << endl;
   if(i > 0){
@@ -95,14 +95,14 @@ Decl* SymbolTable::lookupInScope(string key, scope *s){
 
 scope* SymbolTable::currScope(){
   cout << "getting current scope" << endl;
-  cout << &scopes->back() << endl;
-  if (&scopes->back() == NULL){
+  cout << &scopes.back() << endl;
+  if (&scopes.back() == NULL){
     cout << "FUCK" << endl;
   }
-  return &(scopes->back());
+  return &(scopes.back());
 }
 
 int SymbolTable::size(){
-  cout<<"printing from symtable.cc    "<< scopes->size() << endl;
-  return scopes->size();
+  cout<<"printing from symtable.cc    "<< scopes.size() << endl;
+  return scopes.size();
 }

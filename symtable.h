@@ -17,7 +17,7 @@ typedef map<string, Decl*> scope;
 
 class SymbolTable {
   protected:
-    vector<scope> *scopes;
+    vector<scope> scopes;
 
   public:
     SymbolTable(); //constructor

@@ -32,6 +32,7 @@ void Program::Check() {
     // replace it with your own implementation
     if ( decls->NumElements() > 0 ) {
       cout << "Create first scope." << endl;
+      cout << Node::symtable->forFlag<<endl;
       cout << Node::symtable->size() << endl;
       scope s;
       cout << &s << endl;
