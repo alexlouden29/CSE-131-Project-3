@@ -12,6 +12,10 @@
 
 /*** Expr Checks ***/
 
+Type* Call::CheckWithType(){
+  return NULL;
+}
+
 //Field Access
 
 Type* ArrayAccess::CheckWithType(){
