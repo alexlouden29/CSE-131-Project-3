@@ -11,6 +11,8 @@
 #include "errors.h"
 
 /*** Expr Checks ***/
+
+//Function Call check
 Type* Call::CheckWithType(){
   FnDecl* fDecl = (FnDecl*)Node::symtable->lookup(field->GetName());
   if(fDecl == NULL){
@@ -47,13 +49,80 @@ Type* Call::CheckWithType(){
 }
 
 //Field Access
+Type* FieldAccess::CheckWithType(){
+  //Check if called on a vec or mat type
+  Type* btype = base->CheckWithType();
+  if(btype == Type::mat2Type)
+    btype = Type::vec2Type;
+  if(btype == Type::mat3Type)
+    btype = Type::vec3Type;
+  if(btype == Type::mat4Type)
+    btype = Type::vec4Type;
+  if(!(btype->IsVector() || btype->IsError())){
+    ReportError::InaccessibleSwizzle(field, base);
+    type = Type::errorType;
+    return type;
+  }
+  //Check if swizzle is indeed a swizzle, or whatever
+  string s = field->GetName();
+  string::size_type i;
+  for(i = 0; i < s.size(); i++){
+    //Check swizzle letters are right
+    if(s[i] != 'x' && s[i] != 'y' && s[i] != 'z' && s[i] != 'w' ){
+      ReportError::InvalidSwizzle(field, base);
+      type = Type::errorType;
+      return type;
+    }
+    //Check if letters out of bounds
+    if(btype == Type::vec2Type && s[i] != 'x' && s[i] != 'y' ){
+      ReportError::SwizzleOutOfBound(field, base);
+      type = Type::errorType;
+      return type;
+    }
+    if(btype == Type::vec3Type && s[i] != 'x' && s[i] != 'y' && s[i] != 'z' ){
+      ReportError::SwizzleOutOfBound(field, base);
+      type = Type::errorType;
+      return type;
+    }
+    //Check if swizzle is too long
+    if(i > 4){
+      ReportError::OversizedVector(field, base);
+      type = Type::errorType;
+      return type;
+    }
+  }
+  if(i==2){
+    //base->type = Type::vec2Type;
+    type = Type::Type::vec2Type;
+    return type;
+  }
+  if(i==3){
+    //base->type = Type::vec3Type;
+    type = Type::vec3Type;
+    return type;
+  }
+  if(i==3){
+    //base->type = Type::vec4Type;
+    type = Type::vec4Type;
+    return type;
+  }
+  else {
+    type = btype;
+    return type;
+  }
+}
 
+//Check Array sutff
 Type* ArrayAccess::CheckWithType(){
-  //VarDecl* vType = (VarDecl*)Node::symtable->lookup(id->GetName());
   VarExpr* vExpr = (VarExpr*)base;
   ArrayType* baseType = dynamic_cast<ArrayType*>(vExpr->CheckWithType());
+  //If arrayType
   if(baseType != NULL){
     type = baseType->GetElemType();
+    return type;
+  }
+  if(vExpr->CheckWithType()->IsMatrix() ){
+    type = vExpr->type;
     return type;
   }
   VarExpr* vbase = (VarExpr*)base;
@@ -181,21 +250,18 @@ Type* RelationalExpr::CheckWithType(){
 
 //Updates expr type and returns that type.
 Type* BoolConstant::CheckWithType(){
-  //cout << "HI FROM BOOLCONSTANT FUCKER" << endl;
   type = Type::boolType;
   return type;
 }
 
 //Updates expr type and returns that type.
 Type* FloatConstant::CheckWithType(){
-  //cout << "HI FROM FLOATCONSTANT FUCKER" << endl;
   type = Type::floatType;
   return type;
 }
 
 //Updates expr type and returns that type.
 Type* IntConstant::CheckWithType(){
-  //cout << "HI FROM INTCONSTANT FUCKER" << endl;
   type = Type::intType;
   return type;
 }
