@@ -210,7 +210,8 @@ void ReturnStmt::Check(){
     Expr *e = this->expr;
     if( e != NULL){
         Type * type = e-> CheckWithType();
-        if(Node::symtable->returnType != type){
+        if(!type->IsConvertibleTo(symtable->returnType) && 
+           !symtable->returnType->IsConvertibleTo(type)){
             ReportError::ReturnMismatch(this, type, Node::symtable->returnType);
         }
     }
