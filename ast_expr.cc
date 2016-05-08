@@ -13,6 +13,7 @@
 /*** Expr Checks ***/
 
 Type* Call::CheckWithType(){
+  
   return NULL;
 }
 
@@ -81,7 +82,8 @@ Type* EqualityExpr::CheckWithType(){
   //cout << "HI FROM EQUALITY EXPR FUCKER" << endl;
   left->CheckWithType();
   right->CheckWithType();
-  if(!left->type->Type::IsConvertibleTo(right->type)){
+  if(!left->type->Type::IsConvertibleTo(right->type) &&
+     !right->type->Type::IsConvertibleTo(left->type)){
     //cout << "EQUALITY ERROR FUCKER" << endl;
     ReportError::IncompatibleOperands(op, left->type, right->type);
     type = Type::errorType;
@@ -96,8 +98,9 @@ Type* AssignExpr::CheckWithType(){
   //cout << "HI FROM ASSIGN EXPR FUCKER" << endl;
   left->CheckWithType();
   right->CheckWithType();
-  if(!left->type->Type::IsConvertibleTo(right->type)){
-    cout << "ASSIGN ERROR FUCKER" << endl;
+  if(!left->type->Type::IsConvertibleTo(right->type) &&
+      !right->type->Type::IsConvertibleTo(left->type)){
+    //cout << "ASSIGN ERROR FUCKER" << endl;
     ReportError::IncompatibleOperands(op, left->type, right->type);
     type = Type::errorType;
     return type;
