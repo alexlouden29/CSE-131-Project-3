@@ -54,7 +54,6 @@ void StmtBlock::PrintChildren(int indentLevel) {
 }
 
 void StmtBlock::Check(){
-    cout << "in a stmt block"<< endl;
     Node *n = this->GetParent();
     StmtBlock *sBlock = dynamic_cast<StmtBlock*>(n);
     if(sBlock != NULL){
@@ -249,11 +248,15 @@ void SwitchStmt::PrintChildren(int indentLevel) {
 }
 
 void Case::Check(){
-    
+    Expr *e = this->label;
+    e->CheckWithType();
+    Stmt *s = this->stmt;
+    s->Check();
 }
 
 void Default::Check(){
-
+    Stmt *s = this->stmt;
+    s->Check();
 }
 
 void SwitchStmt::Check(){
@@ -265,10 +268,22 @@ void SwitchStmt::Check(){
     Type *t = e->CheckWithType();
 
     List<Stmt*> *c = this->cases;
+    Stmt *stmt = NULL;
     for(int i = 0; i < c->NumElements(); i++){
-        c->Nth(i);
+        stmt = c->Nth(i);
+        stmt->Check();
     }
     Default *d = this -> def;
+    if( d != NULL){
+        d->Check();
+    }
+    if(Node::symtable->breakFlag != true){
+        Node::symtable->popScope();
+    }
+    else{
+        Node::symtable->breakFlag = false;
+    }
+    Node::symtable->switchFlag = false;
 }
 
 void BreakStmt::Check(){
