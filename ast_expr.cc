@@ -12,9 +12,41 @@
 
 /*** Expr Checks ***/
 
+  //VarDecl* vType = (VarDecl*)Node::symtable->lookup(id->GetName());
+  //if(vType == NULL){ 
 Type* Call::CheckWithType(){
-  
-  return NULL;
+  FnDecl* fDecl = (FnDecl*)Node::symtable->lookup(field->GetName());
+  if(fDecl == NULL){
+    ReportError::NotAFunction(field);
+    type = Type::errorType;
+    return type;
+  }
+  int fsize = fDecl->GetFormals()->NumElements();
+  //Too many formals
+  if( actuals->NumElements() > fsize ){
+    ReportError::ExtraFormals(field, fsize, actuals->NumElements());
+    type = Type::errorType;
+    return type;
+  }
+  //Too few formals
+  if( actuals->NumElements() < fsize ){
+    ReportError::LessFormals(field, fsize, actuals->NumElements());
+    type = Type::errorType;
+    return type;
+  }
+  //Check arg types
+  for(int x = 0; x < actuals->NumElements(); x++){
+    Type* actualType = actuals->Nth(x)->CheckWithType();
+    Type* formalType = fDecl->GetType();
+    if(!actualType->IsConvertibleTo(formalType) &&
+       !formalType->IsConvertibleTo(actualType) ) {
+      ReportError::FormalsTypeMismatch(field, x, formalType, actualType);
+      type = Type::errorType;
+      return type;
+    }
+  }
+  //Return return type of function
+  return fDecl->GetType();
 }
 
 //Field Access
