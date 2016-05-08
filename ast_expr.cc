@@ -11,9 +11,6 @@
 #include "errors.h"
 
 /*** Expr Checks ***/
-
-  //VarDecl* vType = (VarDecl*)Node::symtable->lookup(id->GetName());
-  //if(vType == NULL){ 
 Type* Call::CheckWithType(){
   FnDecl* fDecl = (FnDecl*)Node::symtable->lookup(field->GetName());
   if(fDecl == NULL){
@@ -208,7 +205,7 @@ Type* VarExpr::CheckWithType(){
   //cout << "HI FROM VAR EXPR FUCKER" << endl;
   VarDecl* vType = (VarDecl*)Node::symtable->lookup(id->GetName());
   if(vType == NULL){ 
-    cout << "HI FROM VAR EXPR ERROR FUCKER" << endl;
+    //cout << "HI FROM VAR EXPR ERROR FUCKER" << endl;
     ReportError::IdentifierNotDeclared(this->GetIdentifier(), reasonT(1));
     type = Type::errorType;
     return type;

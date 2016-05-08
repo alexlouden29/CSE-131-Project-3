@@ -11,7 +11,6 @@
 
 //Check function for Variable Declarations
 void VarDecl::CheckID(Identifier *id){
-  cout << "VarDecl" << endl;
   string str = string( id->GetName() );
   scope* sc = symtable->currScope();
   Decl *d = symtable->lookupInScope(str, sc);
