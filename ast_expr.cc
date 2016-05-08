@@ -63,6 +63,14 @@ Type* FieldAccess::CheckWithType(){
     type = Type::errorType;
     return type;
   }
+  //Betty added stuff
+  if(btype == Type::vec2Type)
+    btype = Type::floatType;   //TODO: these need to be able to be intType
+  if(btype == Type::vec3Type)
+    btype = Type::floatType;
+  if(btype == Type::vec4Type)
+    btype = Type::floatType;
+
   //Check if swizzle is indeed a swizzle, or whatever
   string s = field->GetName();
   string::size_type i;
@@ -84,7 +92,21 @@ Type* FieldAccess::CheckWithType(){
       type = Type::errorType;
       return type;
     }
+    if(btype == Type::vec4Type && s[i] != 'x' && s[i] != 'y' && s[i] != 'z' && s[i] != 'w'){
+      ReportError::SwizzleOutOfBound(field, base);
+      type = Type::errorType;
+      return type;
+    }
     //Check if swizzle is too long
+    if(btype == Type::vec2Type && i > 2){
+      ReportError::OversizedVector(field,base);
+    }
+    if(btype == Type::vec3Type && i > 2){
+      ReportError::OversizedVector(field,base);
+    }
+    if(btype == Type::vec4Type && i > 2){
+      ReportError::OversizedVector(field,base);
+    }
     if(i > 4){
       ReportError::OversizedVector(field, base);
       type = Type::errorType;
@@ -134,7 +156,13 @@ Type* ArrayAccess::CheckWithType(){
 //Checks that it is an int or float so that it can be incremented.
 Type* PostfixExpr::CheckWithType(){
   if(left->CheckWithType()->Type::IsConvertibleTo(Type::intType) ||
-     left->CheckWithType()->Type::IsConvertibleTo(Type::floatType)){
+     left->CheckWithType()->Type::IsConvertibleTo(Type::floatType) ||
+     left->CheckWithType()->Type::IsConvertibleTo(Type::vec2Type) ||
+     left->CheckWithType()->Type::IsConvertibleTo(Type::vec3Type) ||
+     left->CheckWithType()->Type::IsConvertibleTo(Type::vec4Type) ||
+     left->CheckWithType()->Type::IsConvertibleTo(Type::mat2Type) ||
+     left->CheckWithType()->Type::IsConvertibleTo(Type::mat3Type) ||
+     left->CheckWithType()->Type::IsConvertibleTo(Type::mat4Type)){
     type = left->type;
     return type;
   }
@@ -148,7 +176,13 @@ Type* ArithmeticExpr::CheckWithType(){
   //One variable expr
   if(left == NULL){
     if(right->CheckWithType()->Type::IsConvertibleTo(Type::intType) ||
-       right->CheckWithType()->Type::IsConvertibleTo(Type::floatType)){
+       right->CheckWithType()->Type::IsConvertibleTo(Type::floatType) ||
+       right->CheckWithType()->Type::IsConvertibleTo(Type::vec2Type) ||
+       right->CheckWithType()->Type::IsConvertibleTo(Type::vec3Type) ||
+       right->CheckWithType()->Type::IsConvertibleTo(Type::vec4Type) ||
+       right->CheckWithType()->Type::IsConvertibleTo(Type::mat2Type) ||
+       right->CheckWithType()->Type::IsConvertibleTo(Type::mat3Type) ||
+       right->CheckWithType()->Type::IsConvertibleTo(Type::mat4Type)){
       type = right->type;
       return type;
     }
@@ -158,12 +192,21 @@ Type* ArithmeticExpr::CheckWithType(){
   }
   //Two variable expr
   //One way to do it
-  //cout << "HI FROM ARITHMETIC EXPR FUCKER" << endl;
   if((left->CheckWithType()->Type::IsConvertibleTo(Type::intType) ||
      left->type->Type::IsConvertibleTo(Type::floatType)) &&
      (right->CheckWithType()->Type::IsConvertibleTo(Type::intType) ||
      right->type->Type::IsConvertibleTo(Type::floatType)) &&
      left->type->Type::IsConvertibleTo(right->type)){
+    type = left->type;
+    return type;
+  }
+  //handling arithmetic between matrixes
+  else if(((right->CheckWithType()->Type::mat2Type) && (left->CheckWithType()->Type::mat2Type)) || 
+     ((right->CheckWithType()->Type::mat3Type) && (left->CheckWithType()->Type::mat3Type)) ||
+    ((right->CheckWithType()->Type::mat4Type) && (left->CheckWithType()->Type::mat4Type)) ||
+    ((right->CheckWithType()->Type::vec3Type) && (left->CheckWithType()->Type::vec3Type)) ||
+    ((right->CheckWithType()->Type::vec2Type) && (left->CheckWithType()->Type::vec2Type)) ||
+    ((right->CheckWithType()->Type::vec4Type) && (left->CheckWithType()->Type::vec4Type))){
     type = left->type;
     return type;
   }
@@ -196,8 +239,15 @@ Type* AssignExpr::CheckWithType(){
   //cout << "HI FROM ASSIGN EXPR FUCKER" << endl;
   left->CheckWithType();
   right->CheckWithType();
-  if(!left->type->Type::IsConvertibleTo(right->type) &&
-      !right->type->Type::IsConvertibleTo(left->type)){
+  if((!left->type->Type::IsConvertibleTo(right->type) &&
+      !right->type->Type::IsConvertibleTo(left->type))){
+    if( (left->type == Type::vec2Type || left->type == Type::vec3Type ||
+         left->type == Type::vec4Type ) && 
+        (right->type == Type::mat2Type || right->type == Type::mat3Type ||
+         right->type == Type::mat4Type)){
+        type = left->type;
+        return type;
+    }
     //cout << "ASSIGN ERROR FUCKER" << endl;
     ReportError::IncompatibleOperands(op, left->type, right->type);
     type = Type::errorType;

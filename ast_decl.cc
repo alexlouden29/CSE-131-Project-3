@@ -24,12 +24,14 @@ void VarDecl::CheckID(Identifier *id){
   }
   //Check that types match if variable is set to something.
   if(assignTo != NULL){
-    //cout << "ASSIGN TO IS NOT NULL" << endl;
+    cout << "ASSIGN TO IS NOT NULL" << endl;
     Type *rtype = assignTo->CheckWithType();
+    cout << "oNE" <<endl;
     if(!type->IsConvertibleTo(rtype)){
       ReportError::InvalidInitialization(id, type, rtype);
       //type = Type::errorType;
       //return;
+      cout << "huh"<<endl;
     }
   }
 }
