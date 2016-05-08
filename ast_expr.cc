@@ -93,7 +93,7 @@ Type* AssignExpr::CheckWithType(){
   left->CheckWithType();
   right->CheckWithType();
   if(!left->type->Type::IsConvertibleTo(right->type)){
-    //cout << "ASSIGN ERROR FUCKER" << endl;
+    cout << "ASSIGN ERROR FUCKER" << endl;
     ReportError::IncompatibleOperands(op, left->type, right->type);
     type = Type::errorType;
     return type;
@@ -169,7 +169,7 @@ Type* VarExpr::CheckWithType(){
   //cout << "HI FROM VAR EXPR FUCKER" << endl;
   VarDecl* vType = (VarDecl*)Node::symtable->lookup(id->GetName());
   if(vType == NULL){ 
-    //cout << "HI FROM VAR EXPR ERROR FUCKER" << endl;
+    cout << "HI FROM VAR EXPR ERROR FUCKER" << endl;
     ReportError::IdentifierNotDeclared(this->GetIdentifier(), reasonT(1));
     type = Type::errorType;
     return type;
