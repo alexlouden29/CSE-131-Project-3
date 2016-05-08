@@ -33,6 +33,8 @@ void VarDecl::CheckID(Identifier *id){
     }
   }
 }
+
+
          
 Decl::Decl(Identifier *n) : Node(*n->GetLocation()) {
     Assert(n != NULL);
@@ -126,4 +128,5 @@ void FnDecl::CheckID( Identifier *id){
   }
   //popping scope
   symtable->popScope();
+  Node::symtable->funcFlag = false;
 }

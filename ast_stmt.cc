@@ -54,8 +54,12 @@ void StmtBlock::PrintChildren(int indentLevel) {
 }
 
 void StmtBlock::Check(){
-    if(Node::symtable->forFlag == true || Node::symtable->whileFlag == true
-       || Node::symtable->ifFlag == true || Node::symtable->funcFlag == true){
+    Node *n = this->GetParent();
+    Stmt *sBlock = dynamic_cast<Stmt*>(n);
+    if(sBlock == NULL){
+    
+    //if(Node::symtable->forFlag == true || Node::symtable->whileFlag == true
+    //   || Node::symtable->ifFlag == true || Node::symtable->funcFlag == true){
         List<Stmt*> *stmtList = this->stmts;
         Stmt *stmt = NULL;
         for(int i = 0; i < stmtList->NumElements(); i++){
