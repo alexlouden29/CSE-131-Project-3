@@ -248,10 +248,8 @@ void SwitchStmt::PrintChildren(int indentLevel) {
     if (def) def->Print(indentLevel+1);
 }
 
-void SwitchLabel::Check(){
-}
-
 void Case::Check(){
+    
 }
 
 void Default::Check(){
@@ -259,10 +257,22 @@ void Default::Check(){
 }
 
 void SwitchStmt::Check(){
+    scope s;
+    Node::symtable->pushScope(&s);
+    Node::symtable->switchFlag = true;
+    
+    Expr *e = this->expr;
+    Type *t = e->CheckWithType();
+
+    List<Stmt*> *c = this->cases;
+    for(int i = 0; i < c->NumElements(); i++){
+        c->Nth(i);
+    }
+    Default *d = this -> def;
 }
 
 void BreakStmt::Check(){
-    if(Node::symtable->whileFlag == true || Node::symtable->forFlag == true){
+    if(Node::symtable->whileFlag == true || Node::symtable->forFlag == true || Node::symtable->switchFlag == true){
         Node::symtable->breakFlag = true;
         Node::symtable->popScope();
     }

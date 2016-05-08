@@ -98,12 +98,18 @@ void FnDecl::PrintChildren(int indentLevel) {
 }
 
 void FnDecl::CheckID( Identifier *id){
+  string name = id->GetName();
+  Decl *d = Node::symtable->lookup(name);
+  if(d == NULL){
+    Node::symtable->addSymbol(name, this);
+  }
+  else{
+    ReportError::DeclConflict(this, d);
+  }
   Node::symtable->funcFlag = true;
   //pushing new scope
   scope s;
-  symtable->pushScope(&s);
-
-  //how do i verify?
+  symtable->pushScope(&s);  
 
   //TODO: Check if there's a correct number of formals in FnCall
   //adding formals into scope
