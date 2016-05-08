@@ -11,8 +11,6 @@
 
 //Check function for Variable Declarations
 void VarDecl::CheckID(Identifier *id){
-
-  //Check that types match if variable is set to something.
   string str = string( id->GetName() );
   scope* sc = symtable->currScope();
   Decl *d = symtable->lookupInScope(str, sc);
@@ -24,6 +22,7 @@ void VarDecl::CheckID(Identifier *id){
     symtable->addSymbol(str, this);
     //sc = symtable->currScope();
   }
+  //Check that types match if variable is set to something.
   if(assignTo != NULL){
     //cout << "ASSIGN TO IS NOT NULL" << endl;
     Type *rtype = assignTo->CheckWithType();

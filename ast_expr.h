@@ -226,7 +226,7 @@ class ArrayAccess : public LValue
     void PrintChildren(int indentLevel);
 
    //Check Function
-   //Type* CheckWithType();
+   Type* CheckWithType();
 };
 
 /* Note that field access is used both for qualified names

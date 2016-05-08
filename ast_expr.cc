@@ -14,15 +14,19 @@
 
 //Field Access
 
-/*Type* ArrayAccess::CheckWithType(){
-  Type* baseType = base->CheckWithType();
-  if(baseType->isInstanceOf(ArrayType)){
-    return baseType;
+Type* ArrayAccess::CheckWithType(){
+  //VarDecl* vType = (VarDecl*)Node::symtable->lookup(id->GetName());
+  VarExpr* vExpr = (VarExpr*)base;
+  ArrayType* baseType = dynamic_cast<ArrayType*>(vExpr->CheckWithType());
+  if(baseType != NULL){
+    type = baseType->GetElemType();
+    return type;
   }
-  ReportError::NotAnArray((VarDecl)base->id);
-  base->type = Type::ErrorType;
-  return base->type;
-}*/
+  VarExpr* vbase = (VarExpr*)base;
+  ReportError::NotAnArray(vbase->GetIdentifier());
+  type = Type::errorType;
+  return type;
+}
 
 //Checks that it is an int or float so that it can be incremented.
 Type* PostfixExpr::CheckWithType(){
@@ -171,7 +175,6 @@ Type* VarExpr::CheckWithType(){
     return type;
   }
   type = vType->GetType();
-  //cout << "MOTHERFUCKING TYPE: " << type << endl;
   return type;
 }
 
