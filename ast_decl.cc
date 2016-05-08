@@ -11,6 +11,7 @@
 
 //Check function for Variable Declarations
 void VarDecl::CheckID(Identifier *id){
+  cout << "VarDecl" << endl;
   string str = string( id->GetName() );
   scope* sc = symtable->currScope();
   Decl *d = symtable->lookupInScope(str, sc);
@@ -33,6 +34,8 @@ void VarDecl::CheckID(Identifier *id){
     }
   }
 }
+
+
          
 Decl::Decl(Identifier *n) : Node(*n->GetLocation()) {
     Assert(n != NULL);
@@ -126,4 +129,5 @@ void FnDecl::CheckID( Identifier *id){
   }
   //popping scope
   symtable->popScope();
+  Node::symtable->funcFlag = false;
 }

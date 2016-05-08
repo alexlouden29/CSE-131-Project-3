@@ -54,24 +54,18 @@ void StmtBlock::PrintChildren(int indentLevel) {
 }
 
 void StmtBlock::Check(){
-    if(Node::symtable->forFlag == true || Node::symtable->whileFlag == true
-       || Node::symtable->ifFlag == true || Node::symtable->funcFlag == true){
-        List<Stmt*> *stmtList = this->stmts;
-        Stmt *stmt = NULL;
-        for(int i = 0; i < stmtList->NumElements(); i++){
-          stmt = stmtList->Nth(i);
-          stmt->Check();
-        }        
+    cout << "in a stmt block"<< endl;
+    Node *n = this->GetParent();
+    StmtBlock *sBlock = dynamic_cast<StmtBlock*>(n);
+    if(sBlock != NULL){
+        scope s;
+        Node::symtable->pushScope(&s);
     }
-    else{
-      scope s;
-      Node::symtable->pushScope(&s);
-      List<Stmt*> *stmtList = this->stmts;
-      Stmt *stmt = NULL;
-      for(int i = 0; i < stmtList->NumElements(); i++){
+    List<Stmt*> *stmtList = this->stmts;
+    Stmt *stmt = NULL;
+    for(int i = 0; i < stmtList->NumElements(); i++){
         stmt = stmtList->Nth(i);
         stmt->Check();
-      } 
     }
 }
 
@@ -119,7 +113,10 @@ void ForStmt::Check(){
     Expr *e = this ->init;
     e->CheckWithType();
     Expr *t = this -> test;
-    t -> CheckWithType();
+    Type *type = t -> CheckWithType();
+    if( type != Type::boolType){
+        ReportError::TestNotBoolean(t);
+    }
     Expr *step = this -> step;
     step -> CheckWithType();
     Stmt *stmt = this -> body;
@@ -143,7 +140,10 @@ void WhileStmt::Check(){
     Node::symtable->pushScope(&s);
     Node::symtable->whileFlag = true;
     Expr *t = this -> test;
-    t -> CheckWithType();
+    Type *type = t -> CheckWithType();
+    if( type != Type::boolType){
+        ReportError::TestNotBoolean(t);
+    }
     Stmt *stmt = this -> body;
     stmt->Check();
     if(Node::symtable->breakFlag != true){
@@ -175,7 +175,10 @@ void IfStmt::Check(){
     Node::symtable->pushScope(&s);
     Node::symtable->ifFlag = true;
     Expr *t = this -> test;
-    t -> CheckWithType();
+    Type *type = t -> CheckWithType();
+    if( type != Type::boolType){
+        ReportError::TestNotBoolean(t);
+    }
     Stmt *stmtThen = this -> body;
     stmtThen->Check();
     
@@ -206,9 +209,11 @@ void ReturnStmt::PrintChildren(int indentLevel) {
 void ReturnStmt::Check(){
     Node::symtable->returnFlag = true;
     Expr *e = this->expr;
-    Type * type = e-> CheckWithType();
-    if(Node::symtable->returnType != type){
-        ReportError::ReturnMismatch(this, type, Node::symtable->returnType);
+    if( e != NULL){
+        Type * type = e-> CheckWithType();
+        if(Node::symtable->returnType != type){
+            ReportError::ReturnMismatch(this, type, Node::symtable->returnType);
+        }
     }
 }
 
@@ -241,6 +246,19 @@ void SwitchStmt::PrintChildren(int indentLevel) {
     if (expr) expr->Print(indentLevel+1);
     if (cases) cases->PrintAll(indentLevel+1);
     if (def) def->Print(indentLevel+1);
+}
+
+void SwitchLabel::Check(){
+}
+
+void Case::Check(){
+}
+
+void Default::Check(){
+
+}
+
+void SwitchStmt::Check(){
 }
 
 void BreakStmt::Check(){
