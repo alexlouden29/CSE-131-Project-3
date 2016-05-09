@@ -14,6 +14,7 @@
 
 //Function Call check
 Type* Call::CheckWithType(){
+  cout << "IN CALL" << endl;
   FnDecl* fDecl = (FnDecl*)Node::symtable->lookup(field->GetName());
   if(fDecl == NULL){
     ReportError::NotAFunction(field);
@@ -219,8 +220,10 @@ Type* ArithmeticExpr::CheckWithType(){
     ((right->type->Type::vec3Type) && (left->type->Type::vec3Type)) ||
     ((right->type->Type::vec2Type) && (left->type->Type::vec2Type)) ||
     ((right->type->Type::vec4Type) && (left->type->Type::vec4Type))){*/
-  else if((right->type->Type::IsMatrix() && left->type->Type::IsMatrix()) ||
-          (right->type->Type::IsVector() && left->type->Type::IsVector())){
+  else if(((right->type->Type::IsMatrix() && left->type->Type::IsMatrix())&&
+           (right->type->IsConvertibleTo(left->type) && (left->type->IsConvertibleTo(right->type)))) ||
+          ((right->type->Type::IsVector() && left->type->Type::IsVector()) &&
+           (right->type->IsConvertibleTo(left->type) && (left->type->IsConvertibleTo(right->type))))){
     type = left->type;
     return type;
   }
@@ -251,19 +254,18 @@ Type* EqualityExpr::CheckWithType(){
 //Checks for incompatible types between operands.
 Type* AssignExpr::CheckWithType(){
   cout << "HI FROM ASSIGN EXPR FUCKER" << endl;
-  left->CheckWithType();
-  right->CheckWithType();
-  if((!left->type->Type::IsConvertibleTo(right->type) &&
-      !right->type->Type::IsConvertibleTo(left->type))){
-    if( (left->type == Type::vec2Type || left->type == Type::vec3Type ||
-         left->type == Type::vec4Type ) && 
-        (right->type == Type::mat2Type || right->type == Type::mat3Type ||
-         right->type == Type::mat4Type)){
-        type = left->type;
-        return type;
-    }
+  Type *l = left->CheckWithType();
+  Type *r = right->CheckWithType();
+  if((!l->Type::IsConvertibleTo(r) && !r->Type::IsConvertibleTo(l))){
+    //if( (left->type == Type::vec2Type || left->type == Type::vec3Type ||
+     //    left->type == Type::vec4Type ) && 
+     //   (right->type == Type::mat2Type || right->type == Type::mat3Type ||
+     //    right->type == Type::mat4Type)){
+    //    type = left->type;
+    //    return type;
+    //}
     cout << "ASSIGN ERROR FUCKER" << endl;
-    ReportError::IncompatibleOperands(op, left->type, right->type);
+    ReportError::IncompatibleOperands(op, l, r);
     type = Type::errorType;
     return type;
   }

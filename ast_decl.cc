@@ -19,10 +19,9 @@ void VarDecl::CheckID(Identifier *id){
   if (d != NULL) {
     ReportError::DeclConflict(this, d);
   }
-  else{
-    symtable->addSymbol(str, this);
-    //sc = symtable->currScope();
-  }
+  cout << "adding symbol"<<endl;
+  symtable->addSymbol(str, this);
+
   //Check that types match if variable is set to something.
   if(assignTo != NULL){
     cout << "ASSIGN TO IS NOT NULL" << endl;
@@ -111,7 +110,6 @@ void FnDecl::CheckID( Identifier *id){
   scope s;
   symtable->pushScope(&s);  
 
-  //TODO: Check if there's a correct number of formals in FnCall
   //adding formals into scope
   List<VarDecl*> *formals = this->GetFormals();
   if(formals->NumElements() > 0){

@@ -113,15 +113,19 @@ void ForStmt::Check(){
     scope s;
     Node::symtable->pushScope(&s);
     Node::symtable->forFlag = true;
+    cout << "checking expression"<<endl;
     Expr *e = this ->init;
     e->CheckWithType();
+    cout << "checking test"<<endl;
     Expr *t = this -> test;
     Type *type = t -> CheckWithType();
     if( type != Type::boolType){
         ReportError::TestNotBoolean(t);
     }
+    cout<<"checking step"<<endl;
     Expr *step = this -> step;
     step -> CheckWithType();
+    cout << "checking FOR stmt body"<<endl;
     Stmt *stmt = this -> body;
     stmt->Check();
     if(Node::symtable->breakFlag != true){
@@ -186,10 +190,12 @@ void IfStmt::Check(){
     }
     Stmt *stmtThen = this -> body;
     stmtThen->Check();
-    
     Stmt *stmtElse = this -> elseBody;
     if (stmtElse != NULL){
+        scope ss;
+        Node::symtable->pushScope(&ss);
         stmtElse -> Check();
+        Node::symtable->popScope();
     }
     Node::symtable->ifFlag = false;
     if(Node::symtable->breakFlag != true){
@@ -220,6 +226,11 @@ void ReturnStmt::Check(){
         if(!type->IsConvertibleTo(symtable->returnType) && 
            !symtable->returnType->IsConvertibleTo(type)){
             ReportError::ReturnMismatch(this, type, Node::symtable->returnType);
+        }
+    }
+    else{
+        if(!symtable->returnType->IsConvertibleTo(Type::voidType)){
+            ReportError::ReturnMismatch(this, Type::voidType, symtable->returnType);
         }
     }
 }
