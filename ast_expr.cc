@@ -14,7 +14,6 @@
 
 //Function Call check
 Type* Call::CheckWithType(){
-  cout << "IN CALL" << endl;
   FnDecl* fDecl = (FnDecl*)Node::symtable->lookup(field->GetName());
   if(fDecl == NULL){
     ReportError::NotAFunction(field);
@@ -23,7 +22,7 @@ Type* Call::CheckWithType(){
   }
   int fsize = fDecl->GetFormals()->NumElements();
   //Too many formals
-  if( actuals->NumElements() > fsize ){
+  if( actuals->NumElements() > fsize){
     ReportError::ExtraFormals(field, fsize, actuals->NumElements());
     type = Type::errorType;
     return type;
@@ -171,7 +170,8 @@ Type* PostfixExpr::CheckWithType(){
      left->type->Type::IsConvertibleTo(Type::vec4Type) ||
      left->type->Type::IsConvertibleTo(Type::mat2Type) ||
      left->type->Type::IsConvertibleTo(Type::mat3Type) ||
-     left->type->Type::IsConvertibleTo(Type::mat4Type)){
+     left->type->Type::IsConvertibleTo(Type::mat4Type) ||
+     left->type->IsError()){
     type = left->type;
     return type;
   }
@@ -183,6 +183,10 @@ Type* PostfixExpr::CheckWithType(){
 //Same as Relational except for when left is null.
 Type* ArithmeticExpr::CheckWithType(){
   right->CheckWithType();
+  if (right->type == NULL ){
+    type = Type::errorType;
+    return type;
+  }
   if (left != NULL){
     left->CheckWithType();
   }
@@ -195,7 +199,8 @@ Type* ArithmeticExpr::CheckWithType(){
        right->type->Type::IsConvertibleTo(Type::vec4Type) ||
        right->type->Type::IsConvertibleTo(Type::mat2Type) ||
        right->type->Type::IsConvertibleTo(Type::mat3Type) ||
-       right->type->Type::IsConvertibleTo(Type::mat4Type)){
+       right->type->Type::IsConvertibleTo(Type::mat4Type) ||
+       right->type->IsError()){
       type = right->type;
       return type;
     }
@@ -205,11 +210,22 @@ Type* ArithmeticExpr::CheckWithType(){
   }
   //Two variable expr
   //One way to do it
-  if((left->type->Type::IsConvertibleTo(Type::intType) ||
-     left->type->Type::IsConvertibleTo(Type::floatType)) &&
-     (right->type->Type::IsConvertibleTo(Type::intType) ||
-     right->type->Type::IsConvertibleTo(Type::floatType)) &&
-     left->type->Type::IsConvertibleTo(right->type)){
+  if((Type::intType->IsConvertibleTo(left->type) ||
+     Type::floatType->IsConvertibleTo(left->type)) &&
+     (Type::intType->IsConvertibleTo(right->type) ||
+     Type::floatType->IsConvertibleTo(right->type))){
+     if(!left->type->Type::IsConvertibleTo(right->type) &&
+        !right->type->Type::IsConvertibleTo(left->type)){
+       ReportError::IncompatibleOperands(op, left->type, right->type);
+       type = Type::errorType;
+       return type;
+     } 
+     else {
+       type = left->type;
+       return type;
+     }
+  }
+  else if(right->type->IsError() || left->type->IsError()){
     type = left->type;
     return type;
   }
@@ -224,6 +240,10 @@ Type* ArithmeticExpr::CheckWithType(){
            (right->type->IsConvertibleTo(left->type) && (left->type->IsConvertibleTo(right->type)))) ||
           ((right->type->Type::IsVector() && left->type->Type::IsVector()) &&
            (right->type->IsConvertibleTo(left->type) && (left->type->IsConvertibleTo(right->type))))){
+    type = left->type;
+    return type;
+  }
+  else if(right->type->IsError() || left->type->IsError()){
     type = left->type;
     return type;
   }
@@ -253,7 +273,6 @@ Type* EqualityExpr::CheckWithType(){
 
 //Checks for incompatible types between operands.
 Type* AssignExpr::CheckWithType(){
-  cout << "HI FROM ASSIGN EXPR FUCKER" << endl;
   Type *l = left->CheckWithType();
   Type *r = right->CheckWithType();
   if((!l->Type::IsConvertibleTo(r) && !r->Type::IsConvertibleTo(l))){
@@ -264,7 +283,6 @@ Type* AssignExpr::CheckWithType(){
     //    type = left->type;
     //    return type;
     //}
-    cout << "ASSIGN ERROR FUCKER" << endl;
     ReportError::IncompatibleOperands(op, l, r);
     type = Type::errorType;
     return type;
@@ -278,8 +296,8 @@ Type* AssignExpr::CheckWithType(){
 Type* LogicalExpr::CheckWithType(){
   left->CheckWithType();
   right->CheckWithType();
-  if(left->type->Type::IsConvertibleTo(Type::boolType) &&
-     right->type->Type::IsConvertibleTo(Type::boolType)){
+  if(Type::boolType->Type::IsConvertibleTo(left->type) &&
+     Type::boolType->Type::IsConvertibleTo(right->type)){
     type = Type::boolType;
     return type;
   }
@@ -297,11 +315,12 @@ Type* RelationalExpr::CheckWithType(){
   left->CheckWithType();
   right->CheckWithType();
   //One way to do it
-  if((left->type->Type::IsConvertibleTo(Type::intType) ||
-     left->type->Type::IsConvertibleTo(Type::floatType)) &&
-     (right->type->Type::IsConvertibleTo(Type::intType) ||
-     right->type->Type::IsConvertibleTo(Type::floatType)) &&
-     left->type->Type::IsConvertibleTo(right->type)){
+  if((Type::intType->Type::IsConvertibleTo(left->type) ||
+     Type::floatType->Type::IsConvertibleTo(left->type)) &&
+     (Type::intType->Type::IsConvertibleTo(right->type) ||
+     Type::floatType->Type::IsConvertibleTo(right->type)) &&
+     (left->type->Type::IsConvertibleTo(right->type) ||
+     left->type->IsError())){
     type = Type::boolType;
     return type;
   }

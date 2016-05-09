@@ -6,4 +6,4 @@ Next up was expr checks, which involved realizing that we needed to make a diffe
 
 It became apparent that expression checks couldn't be tested without some basic statment checks since assignments can only occur in statement blocks.  Once the enviornment was set up, testing on expression began.  Major overhaul to type returning was required.  Array Access and Field access have been left for last, as they don't tie in as tightly with everything as other elements do.
 
-//Betty write about statment.
+Basically from there endless debugging ensued on both the statement side and expression side, largely to do with cascading errors.  As the clock strikes down, we don't expect to catch every error, but are getting done as much as we can.
