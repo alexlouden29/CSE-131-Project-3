@@ -11,6 +11,7 @@
 
 //Check function for Variable Declarations
 void VarDecl::CheckID(Identifier *id){
+  cout << "var decl"<<endl;
   string str = string( id->GetName() );
   scope* sc = symtable->currScope();
   Decl *d = symtable->lookupInScope(str, sc);
@@ -26,16 +27,14 @@ void VarDecl::CheckID(Identifier *id){
   if(assignTo != NULL){
     cout << "ASSIGN TO IS NOT NULL" << endl;
     Type *rtype = assignTo->CheckWithType();
-    cout << "oNE" <<endl;
     if(!type->IsConvertibleTo(rtype)){
+      cout << "invalid initialization"<<endl;
       ReportError::InvalidInitialization(id, type, rtype);
       //type = Type::errorType;
       //return;
-      cout << "huh"<<endl;
     }
   }
 }
-
 
          
 Decl::Decl(Identifier *n) : Node(*n->GetLocation()) {

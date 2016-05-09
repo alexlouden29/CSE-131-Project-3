@@ -171,6 +171,7 @@ class SwitchLabel : public Stmt
     SwitchLabel(Expr *label, Stmt *stmt);
     SwitchLabel(Stmt *stmt);
     void PrintChildren(int indentLevel);
+    void Check();
 
 };
 

@@ -34,12 +34,19 @@ Type* Call::CheckWithType(){
     return type;
   }
   //Check arg types
-  for(int x = 0; x < actuals->NumElements(); x++){
+  int elems = actuals->NumElements();
+  for(int x = 0; x < elems; x++){
     Type* actualType = actuals->Nth(x)->CheckWithType();
-    Type* formalType = fDecl->GetType();
+    Type* formalType = fDecl->GetFormals()->Nth(x)->GetType();
+    ArrayType* arrActual = dynamic_cast<ArrayType*>(actualType);
+    ArrayType* arrFormal = dynamic_cast<ArrayType*>(formalType);
+    if(arrActual != NULL && arrFormal!= NULL){
+        actualType = arrActual->GetElemType();
+        formalType = arrFormal->GetElemType();
+    }
     if(!actualType->IsConvertibleTo(formalType) &&
        !formalType->IsConvertibleTo(actualType) ) {
-      ReportError::FormalsTypeMismatch(field, x, formalType, actualType);
+      ReportError::FormalsTypeMismatch(field, x+1, formalType, actualType);
       type = Type::errorType;
       return type;
     }
@@ -65,7 +72,7 @@ Type* FieldAccess::CheckWithType(){
   }
   //Betty added stuff
   /*if(btype == Type::vec2Type)
-    btype = Type::floatType;   //TODO: these need to be able to be intType
+    btype = Type::floatType;
   if(btype == Type::vec3Type)
     btype = Type::floatType;
   if(btype == Type::vec4Type)
@@ -175,7 +182,9 @@ Type* PostfixExpr::CheckWithType(){
 //Same as Relational except for when left is null.
 Type* ArithmeticExpr::CheckWithType(){
   right->CheckWithType();
-  left->CheckWithType();
+  if (left != NULL){
+    left->CheckWithType();
+  }
   //One variable expr
   if(left == NULL){
     if(right->type->Type::IsConvertibleTo(Type::intType) ||
@@ -204,12 +213,14 @@ Type* ArithmeticExpr::CheckWithType(){
     return type;
   }
   //handling arithmetic between matrixes
-  else if(((right->type->Type::mat2Type) && (left->type->Type::mat2Type)) || 
+  /*else if(((right->type->Type::mat2Type) && (left->type->Type::mat2Type)) || 
      ((right->type->Type::mat3Type) && (left->type->Type::mat3Type)) ||
     ((right->type->Type::mat4Type) && (left->type->Type::mat4Type)) ||
     ((right->type->Type::vec3Type) && (left->type->Type::vec3Type)) ||
     ((right->type->Type::vec2Type) && (left->type->Type::vec2Type)) ||
-    ((right->type->Type::vec4Type) && (left->type->Type::vec4Type))){
+    ((right->type->Type::vec4Type) && (left->type->Type::vec4Type))){*/
+  else if((right->type->Type::IsMatrix() && left->type->Type::IsMatrix()) ||
+          (right->type->Type::IsVector() && left->type->Type::IsVector())){
     type = left->type;
     return type;
   }
@@ -239,7 +250,7 @@ Type* EqualityExpr::CheckWithType(){
 
 //Checks for incompatible types between operands.
 Type* AssignExpr::CheckWithType(){
-  //cout << "HI FROM ASSIGN EXPR FUCKER" << endl;
+  cout << "HI FROM ASSIGN EXPR FUCKER" << endl;
   left->CheckWithType();
   right->CheckWithType();
   if((!left->type->Type::IsConvertibleTo(right->type) &&
@@ -251,7 +262,7 @@ Type* AssignExpr::CheckWithType(){
         type = left->type;
         return type;
     }
-    //cout << "ASSIGN ERROR FUCKER" << endl;
+    cout << "ASSIGN ERROR FUCKER" << endl;
     ReportError::IncompatibleOperands(op, left->type, right->type);
     type = Type::errorType;
     return type;
