@@ -11,7 +11,6 @@
 
 //Check function for Variable Declarations
 void VarDecl::CheckID(Identifier *id){
-  cout << "var decl"<<endl;
   string str = string( id->GetName() );
   scope* sc = symtable->currScope();
   Decl *d = symtable->lookupInScope(str, sc);
@@ -19,15 +18,12 @@ void VarDecl::CheckID(Identifier *id){
   if (d != NULL) {
     ReportError::DeclConflict(this, d);
   }
-  cout << "adding symbol"<<endl;
   symtable->addSymbol(str, this);
 
   //Check that types match if variable is set to something.
   if(assignTo != NULL){
-    cout << "ASSIGN TO IS NOT NULL" << endl;
     Type *rtype = assignTo->CheckWithType();
     if(!type->IsConvertibleTo(rtype)){
-      cout << "invalid initialization"<<endl;
       ReportError::InvalidInitialization(id, type, rtype);
       //type = Type::errorType;
       //return;

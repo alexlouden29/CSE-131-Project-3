@@ -1,7 +1,0 @@
-*.o
-glc
-sftp-config.json
-.nfs*
-.*.*.sw*
-.*.sw*
-.*

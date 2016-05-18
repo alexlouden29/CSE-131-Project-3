@@ -54,11 +54,9 @@ void StmtBlock::PrintChildren(int indentLevel) {
 }
 
 void StmtBlock::Check(){
-    cout << "STMTBLOCK" << endl;
     Node *n = this->GetParent();
     StmtBlock *sBlock = dynamic_cast<StmtBlock*>(n);
     if(sBlock != NULL){
-        cout << "pushing scope in stmt block" << endl;
         scope s;
         Node::symtable->pushScope(&s);
     }
@@ -80,7 +78,6 @@ void DeclStmt::PrintChildren(int indentLevel) {
 }
 
 void DeclStmt::Check(){
-    cout << "declstmt" << endl;
     decl->CheckID(decl->GetIdentifier());
 }
 
@@ -109,23 +106,18 @@ void ForStmt::PrintChildren(int indentLevel) {
 }
 
 void ForStmt::Check(){
-    cout << "FOR" << endl;
     scope s;
     Node::symtable->pushScope(&s);
     Node::symtable->forFlag = true;
-    cout << "checking expression"<<endl;
     Expr *e = this ->init;
     e->CheckWithType();
-    cout << "checking test"<<endl;
     Expr *t = this -> test;
     Type *type = t -> CheckWithType();
     if( type != Type::boolType){
         ReportError::TestNotBoolean(t);
     }
-    cout<<"checking step"<<endl;
     Expr *step = this -> step;
     step -> CheckWithType();
-    cout << "checking FOR stmt body"<<endl;
     Stmt *stmt = this -> body;
     stmt->Check();
     if(Node::symtable->breakFlag != true){
@@ -143,7 +135,6 @@ void WhileStmt::PrintChildren(int indentLevel) {
 }
 
 void WhileStmt::Check(){
-    cout << "WHILE" << endl;
     scope s;
     Node::symtable->pushScope(&s);
     Node::symtable->whileFlag = true;
@@ -179,7 +170,6 @@ void IfStmt::PrintChildren(int indentLevel) {
 }
 
 void IfStmt::Check(){
-    cout << "IF" << endl;
     scope s;
     Node::symtable->pushScope(&s);
     Node::symtable->ifFlag = true;
@@ -218,7 +208,6 @@ void ReturnStmt::PrintChildren(int indentLevel) {
 }
 
 void ReturnStmt::Check(){
-    cout << "RETURN" << endl;
     Node::symtable->returnFlag = true;
     Expr *e = this->expr;
     if( e != NULL){
@@ -267,7 +256,6 @@ void SwitchStmt::PrintChildren(int indentLevel) {
 }
 
 void Case::Check(){
-    cout << "case" << endl;
     Expr *e = this->label;
     e->CheckWithType();
     Stmt *s = this->stmt;
@@ -275,13 +263,11 @@ void Case::Check(){
 }
 
 void Default::Check(){
-    cout << "default" << endl;
     Stmt *s = this->stmt;
     s->Check();
 }
 
 void SwitchLabel::Check(){
-    cout << "switchlabel"<<endl;
     if(this->label != NULL){
         this->label->CheckWithType();
     }
@@ -289,7 +275,6 @@ void SwitchLabel::Check(){
 }
 
 void SwitchStmt::Check(){
-    cout << "switch"<<endl;
     scope s;
     Node::symtable->pushScope(&s);
     Node::symtable->switchFlag = true;
@@ -299,12 +284,10 @@ void SwitchStmt::Check(){
 
     List<Stmt*> *c = this->cases;
     Stmt *st = NULL;
-    cout << "NUM ELEMENTS = " << c->NumElements()<<endl;
     for(int i = 0; i < c->NumElements(); i++){
         st = c->Nth(i);
         st->Check();
     }
-    cout << "about to check default" << endl;
     Default *d = this -> def;
     if( d != NULL){
         d->Check();
@@ -319,7 +302,6 @@ void SwitchStmt::Check(){
 }
 
 void BreakStmt::Check(){
-    cout << "IN BREAK" << endl;
     Node *n = this->GetParent();
     ForStmt *fStmt = dynamic_cast<ForStmt*>(n);
     WhileStmt *wStmt = dynamic_cast<WhileStmt*>(n);
@@ -327,7 +309,6 @@ void BreakStmt::Check(){
     StmtBlock *sBlock = dynamic_cast<StmtBlock*>(n);
     
     if(sBlock == NULL){
-        cout << "breakStmt sBlock is NULL"<<endl;
         if(fStmt != NULL || wStmt != NULL){
             Node::symtable->breakFlag = true;
             Node::symtable->popScope();
@@ -371,7 +352,6 @@ void BreakStmt::Check(){
 }
 
 void ContinueStmt::Check(){
-    cout << "CONTINUE" << endl;
     Node *n = this->GetParent();
     ForStmt *fStmt = dynamic_cast<ForStmt*>(n);
     WhileStmt *wStmt = dynamic_cast<WhileStmt*>(n);
@@ -392,20 +372,16 @@ void ContinueStmt::Check(){
         sStmt = dynamic_cast<SwitchStmt*>(n);
 
         if(sBlock!=NULL){
-            cout << "sBlock not null"<<endl;
             Node *gma = n->GetParent();
             if(gma != NULL){
-                cout << "gma not null" << endl;
                 fStmt = dynamic_cast<ForStmt*>(gma);
                 wStmt = dynamic_cast<WhileStmt*>(gma);
                 sStmt = dynamic_cast<SwitchStmt*>(gma);
                 if(fStmt != NULL || wStmt != NULL){
-                    if(wStmt != NULL) {cout<<"wStmt"<<endl;}
-                    cout << "not here" << endl;
+                    if(wStmt != NULL) {}
                     return;
                 }
                 else if(sStmt != NULL){
-                    cout << "switch stmt not null" <<endl;
                     ReportError::ContinueOutsideLoop(this);
                     return;
                 }
